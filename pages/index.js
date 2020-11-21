@@ -1,65 +1,110 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import dbConnect from '../utils/dbConnect';
+import Product from '../models/Product';
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const useStyles = makeStyles({
+	root: {
+		maxWidth: 345
+	},
+	media: {
+		height: 300
+	}
+});
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+export default function Home({ products }) {
+	const classes = useStyles();
+	console.log(products);
+	return (
+		<div>
+			<Head>
+				<title>Shoppify</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+			{products.map((product) => (
+				<Card className={classes.root} key={product._id}>
+					<CardActionArea>
+						<CardMedia className={classes.media} title="Contemplative Reptile">
+							<Image src={product.image} height={250} width={300} alt="my product" />
+						</CardMedia>
+						<CardContent>
+							<Typography gutterBottom variant="h5" component="h2">
+								{product.name}
+							</Typography>
+							<Typography gutterBottom variant="h5" component="h2">
+								{product.price}
+							</Typography>
+							<Typography variant="body2" color="textSecondary" component="p">
+								{product.description}
+							</Typography>
+						</CardContent>
+					</CardActionArea>
+					<CardActions>
+						<Button size="small" color="primary">
+							Share
+						</Button>
+						<Link href={`/product/${product._id}`}>
+							<Button size="small" color="primary" component="a">
+								Learn More
+							</Button>
+						</Link>
+					</CardActions>
+				</Card>
+			))}
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+			{/* <Card className={classes.root}>
+				<CardActionArea>
+					<CardMedia className={classes.media} title="Contemplative Reptile">
+						<Image src={products.image} height={140} width={140} alt="my product" />
+					</CardMedia>
+					<CardContent>
+						<Typography gutterBottom variant="h5" component="h2">
+							{products.title}
+						</Typography>
+						<Typography gutterBottom variant="h5" component="h2">
+							{products.price}
+						</Typography>
+						<Typography variant="body2" color="textSecondary" component="p">
+							{products.description}
+						</Typography>
+					</CardContent>
+				</CardActionArea>
+				<CardActions>
+					<Button size="small" color="primary">
+						Share
+					</Button>
+					<Button size="small" color="primary">
+						Learn More
+					</Button>
+				</CardActions>
+			</Card> */}
+		</div>
+	);
+}
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+export async function getStaticProps() {
+	await dbConnect();
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+	/* In getStaticProps we can directly qury database since it runs on server */
+	const result = await Product.find({});
+	const products = result.map((doc) => {
+		const product = doc.toObject();
+		product._id = product._id.toString();
+		return product;
+	});
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+	return {
+		props: {
+			products
+		}
+	};
 }
