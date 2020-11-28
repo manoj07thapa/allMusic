@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import fetch from 'isomorphic-unfetch';
 import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { parseCookies } from 'nookies';
 import { Typography, Card, CardActions, CardContent, TextField, Button } from '@material-ui/core';
 import dbConnect from '../../utils/dbConnect';
 import Product from '../../models/Product';
 import Modal from '../../components/Modal';
+import cookie1 from 'js-cookie';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -24,17 +26,42 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SingleNote({ product }) {
 	const classes = useStyles();
+	const [ quantity, setQuantity ] = useState(1);
 
 	const router = useRouter();
 
-	console.log(router);
+	const cookie = parseCookies();
+	const user = cookie.user ? JSON.parse(cookie.user) : '';
+
+	const addToCart = async () => {
+		try {
+			const res = await fetch(`/api/cart`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: cookie.token
+				},
+				body: JSON.stringify({ quantity, productId: product._id })
+			});
+			const data = await res.json();
+			console.log(data);
+			// if (res.status === 200) {
+			// 	router.push('/');
+			// }
+		} catch (error) {
+			console.log(error);
+			cookie1.remove('user');
+			cookie1.remove('token');
+			router.push('/login');
+		}
+	};
+
 	const handleDelete = async () => {
 		const productId = router.query.id;
 		try {
 			const res = await fetch(`/api/products/${productId}`, {
 				method: 'DELETE'
 			});
-			console.log(res);
 			if (res.status === 200) {
 				router.push('/');
 			}
@@ -42,6 +69,7 @@ export default function SingleNote({ product }) {
 			console.log(error);
 		}
 	};
+
 	if (router.isFallback) {
 		return <h3>Loading...</h3>;
 	}
@@ -64,22 +92,34 @@ export default function SingleNote({ product }) {
 					shrink: true
 				}}
 				variant="outlined"
-				defaultValue="1"
+				value={quantity}
+				onChange={(e) => setQuantity(parseInt(e.target.value))}
 			/>
-			<Button color="primary" variant="contained">
-				<AddIcon /> Add Product
-			</Button>
+			{user ? (
+				<Button color="primary" variant="contained" onClick={addToCart}>
+					<AddIcon /> Add Product
+				</Button>
+			) : (
+				<Button color="primary" variant="contained" onClick={() => router.push('/login')}>
+					Login To add product
+				</Button>
+			)}
+
 			<br />
 			<br />
-			<CardActions>
+			{user.role === 'asmin' || user.role === 'root' ? (
+				<CardActions>
+					<Modal handleDelete={handleDelete} />
+				</CardActions>
+			) : null}
+			{/* <CardActions>
 				<Modal handleDelete={handleDelete} />
-			</CardActions>
+			</CardActions> */}
 		</Card>
 	);
 }
 
 export async function getStaticProps(ctx) {
-	console.log(ctx);
 	const id = ctx.params.id;
 	await dbConnect();
 	const product = await Product.findById(id).lean();

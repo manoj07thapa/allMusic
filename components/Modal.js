@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Modal, Button } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -39,7 +40,7 @@ export default function SimpleModal({ handleDelete }) {
 	return (
 		<div>
 			<Button type="button" onClick={handleOpen} color="secondary" variant="contained">
-				Delete
+				<DeleteIcon />
 			</Button>
 			<Modal
 				open={open}

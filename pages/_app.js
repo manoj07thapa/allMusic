@@ -3,6 +3,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
+import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import theme from './theme';
 
@@ -35,6 +36,7 @@ export default class MyApp extends App {
 							<Component {...pageProps} />
 						</Box>
 					</Container>
+					<Footer />
 				</ThemeProvider>
 			</React.Fragment>
 		);

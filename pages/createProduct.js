@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import fetch from 'isomorphic-unfetch';
 import { TextField, Button, Typography, LinearProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { parseCookies } from 'nookies';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -18,7 +19,7 @@ export default function createProduct() {
 	const classes = useStyles();
 
 	const [ name, setName ] = useState('');
-	const [ price, setPrice ] = useState(null);
+	const [ price, setPrice ] = useState('');
 	const [ description, setDescription ] = useState('');
 	const [ image, setImage ] = useState('');
 	const [ loading, setLoading ] = useState(false);
@@ -42,7 +43,7 @@ export default function createProduct() {
 		e.preventDefault();
 		// const errors = validate(formData);
 		// setErrors(errors);
-		console.log({ name, price, description, image });
+		const cloudinaryImage = await imageUpload();
 		if (Object.keys(errors).length === 0) {
 			setLoading(true);
 			try {
@@ -52,11 +53,13 @@ export default function createProduct() {
 						Accept: 'application/json',
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({ name, price, description, image })
+					body: JSON.stringify({ name, price, description, image: cloudinaryImage })
 				});
 				const data = await res.json();
 				if (data.success === false) {
 					alert(data.message);
+				} else {
+					alert(data.success);
 				}
 				console.log(data);
 				router.push('/');
@@ -66,6 +69,19 @@ export default function createProduct() {
 				setErrors(error.message);
 			}
 		}
+	};
+
+	const imageUpload = async () => {
+		const formData = new FormData();
+		formData.append('file', image);
+		formData.append('upload_preset', 'mystore'); //my store is a store in cloudinary
+		formData.append('cloud_name', 'karma-777'); //karma-777 is is my cloud name in cloudinary
+		const res = await fetch('https://api.cloudinary.com/v1_1/karma-777/image/upload', {
+			method: 'POST',
+			body: formData
+		});
+		const data = await res.json();
+		return data.url;
 	};
 
 	// const validate = (data) => {
@@ -136,4 +152,20 @@ export default function createProduct() {
 			)}
 		</div>
 	);
+}
+
+export async function getServerSideProps(ctx) {
+	const cookie = parseCookies(ctx);
+	const user = cookie.user ? JSON.parse(cookie.user) : '';
+	if (user.role === 'user' || user.role === '') {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: true
+			}
+		};
+	}
+	return {
+		props: {}
+	};
 }

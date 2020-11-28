@@ -33,7 +33,7 @@ export default async (req, res) => {
 
 		case 'DELETE':
 			try {
-				const product = await Product.deleteOne({ _id: id });
+				const product = await Product.findByIdAndRemove({ _id: id, useFindAndModify: false });
 				if (!product) {
 					return res.status(400).json({ success: false, message: 'couldnot find the product' });
 				}
