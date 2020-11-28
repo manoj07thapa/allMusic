@@ -6,7 +6,7 @@ export default Authenticated(async (req, res) => {
     In this case the logged in user is root user */
 
 	try {
-		const users = await User.find({ _id: { $ne: req.userId } });
+		const users = await User.find({ _id: { $ne: req.userId } }).select('-password');
 		res.status(200).json({ success: true, users });
 	} catch (error) {
 		res.status(404).json({ success: false, data: {} });
