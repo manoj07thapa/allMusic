@@ -5,9 +5,7 @@ import Head from 'next/head';
 import React from 'react';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
-// import theme from './theme';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { red } from '@material-ui/core/colors';
+import theme from '../components/theme';
 
 // axios.defaults.baseURL = 'http://localhost:3000';
 
@@ -22,23 +20,6 @@ export default class MyApp extends App {
 
 	render() {
 		const { Component, pageProps } = this.props;
-
-		const theme = createMuiTheme({
-			palette: {
-				primary: {
-					main: '#556cd6'
-				},
-				secondary: {
-					main: '#19857b'
-				},
-				error: {
-					main: red.A400
-				},
-				background: {
-					default: 'white'
-				}
-			}
-		});
 
 		return (
 			<React.Fragment>
