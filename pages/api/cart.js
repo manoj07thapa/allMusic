@@ -1,15 +1,11 @@
 import Cart from '../../models/Cart';
 import Authenticated from '../../utils/Authenticated';
 import dbConnect from '../../utils/dbConnect';
-import jwt from 'jsonwebtoken';
 
 dbConnect();
 
 export default async (req, res) => {
 	switch (req.method) {
-		// case 'GET':
-		// 	await fetchUserCart(req, res);
-		// 	break;
 		case 'PUT':
 			await addProduct(req, res);
 			break;
@@ -18,29 +14,6 @@ export default async (req, res) => {
 			break;
 	}
 };
-
-// const fetchUserCart = Authenticated(async (req, res) => {
-// 	const cart = await Cart.findOne({ user: req.userId }).populate('products.product');
-// 	res.status(200).json(cart.products);
-// });
-// function Authenticated(icomponent) {
-// 	return (req, res) => {
-// 		console.log(req.headers);
-// 		const { authorization } = req.headers;
-// 		console.log(authorization);
-// 		if (!authorization) {
-// 			return res.status(401).json({ error: 'you must logged in' });
-// 		}
-// 		try {
-// 			const { userId } = jwt.verify(authorization, process.env.JWT_SECRET);
-// 			req.userId = userId;
-// 			return icomponent(req, res);
-// 		} catch (err) {
-// 			console.log(err);
-// 			return res.status(401).json({ error: 'you must logged in' });
-// 		}
-// 	};
-// }
 
 const addProduct = Authenticated(async (req, res) => {
 	const { quantity, productId } = req.body;

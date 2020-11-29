@@ -2,13 +2,15 @@ import { parseCookies } from 'nookies';
 import UserRoles from '../components/UserRoles';
 
 export default function DashBoard() {
+	const cookie = parseCookies();
+	const user = cookie.user ? JSON.parse(cookie.user) : '';
 	return (
 		<div>
 			<h2>User's Detail</h2>
 			<hr />
 			<br />
 			<br />
-			<UserRoles />
+			{user.role === 'root' && <UserRoles />}
 		</div>
 	);
 }
