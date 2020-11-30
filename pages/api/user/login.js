@@ -9,12 +9,12 @@ export default async (req, res) => {
 	const { email, password } = req.body;
 	try {
 		if (!email || !password) {
-			return res.status(422).json({ error: 'please add all the fields' });
+			return res.status(422).json({ success: false, error: 'please add all the fields' });
 		}
 		const user = await User.findOne({ email });
 		console.log(user);
 		if (!user) {
-			return res.status(404).json({ error: 'user dont exists with that email' });
+			return res.status(404).json({ success: false, error: 'Invalid credentials' });
 		}
 		const doMatch = await bcrypt.compare(password, user.password);
 		if (doMatch) {
@@ -27,6 +27,6 @@ export default async (req, res) => {
 			return res.status(401).json({ success: false, error: 'email or password dont match' });
 		}
 	} catch (err) {
-		res.status(400).json({ success: false, error: err });
+		res.status(400).json({ success: false, error: 'server error' });
 	}
 };
