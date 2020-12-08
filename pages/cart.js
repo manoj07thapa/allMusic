@@ -122,12 +122,7 @@ export async function getServerSideProps(ctx) {
 		const { userId } = jwt.verify(token, process.env.JWT_SECRET);
 
 		const cart = await Cart.findOne({ user: userId }).populate('products.product');
-		// const products = JSON.stringify(cart.products);
-		// const products = cart.products.map((doc) => {
-		// 	const product = doc.toObject();
-		// 	product._id = product._id.toString();
-		// 	return product;
-		// });
+
 		const products = JSON.parse(JSON.stringify(cart.products));
 		console.log(products);
 

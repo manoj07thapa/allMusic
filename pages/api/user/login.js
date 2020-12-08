@@ -6,13 +6,13 @@ import jwt from 'jsonwebtoken';
 dbConnect();
 
 export default async (req, res) => {
+	console.log(req.body);
 	const { email, password } = req.body;
 	try {
 		if (!email || !password) {
-			return res.status(422).json({ success: false, error: 'please add all the fields' });
+			return res.status(422).json({ success: false, error: 'Please add all the fields' });
 		}
 		const user = await User.findOne({ email });
-		console.log(user);
 		if (!user) {
 			return res.status(404).json({ success: false, error: 'Invalid credentials' });
 		}
@@ -24,7 +24,7 @@ export default async (req, res) => {
 			const { firstname, role, email } = user;
 			res.status(201).json({ success: true, token, user: { firstname, role, email } });
 		} else {
-			return res.status(401).json({ success: false, error: 'email or password dont match' });
+			return res.status(401).json({ success: false, error: 'Email or password is Invalid' });
 		}
 	} catch (err) {
 		res.status(400).json({ success: false, error: 'server error' });

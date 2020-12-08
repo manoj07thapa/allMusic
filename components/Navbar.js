@@ -1,9 +1,8 @@
-import { AppBar, Button, Toolbar, Typography, Container } from '@material-ui/core';
+import { AppBar, Button, Toolbar, Typography, Container, Tooltip, IconButton } from '@material-ui/core';
 import Link from 'next/link';
 import { makeStyles } from '@material-ui/core/styles';
 import Image from 'next/image';
 import { parseCookies } from 'nookies';
-import { Fragment } from 'react';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import PersonIcon from '@material-ui/icons/Person';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -65,9 +64,11 @@ export default function Nav() {
 
 					{user ? (
 						<div>
-							<Button color="inherit" component="a" onClick={handleLogout}>
-								<PersonIcon />
-							</Button>
+							<Tooltip title="logout">
+								<IconButton color="inherit" component="a" onClick={handleLogout} aria-label="logout">
+									<PersonIcon />
+								</IconButton>
+							</Tooltip>
 						</div>
 					) : (
 						<div>
@@ -76,6 +77,7 @@ export default function Nav() {
 									Signup
 								</Button>
 							</Link>
+
 							<Link href="/login">
 								<Button color="inherit" component="a">
 									Login
@@ -90,17 +92,23 @@ export default function Nav() {
 									Create
 								</Button>
 							</Link>
+
 							<Link href="/dashboard">
-								<Button color="inherit" component="a">
-									<DashboardIcon />
-								</Button>
+								<Tooltip title="Dashboard">
+									<IconButton color="inherit" component="a" aria-label="Dashboard">
+										<DashboardIcon />
+									</IconButton>
+								</Tooltip>
 							</Link>
 						</div>
 					) : null}
+
 					<Link href="/cart">
-						<Button color="inherit" component="a">
-							<ShoppingBasketIcon />
-						</Button>
+						<Tooltip title="Shopping cart">
+							<IconButton color="inherit" component="a" aria-label="Shopping cart">
+								<ShoppingBasketIcon />
+							</IconButton>
+						</Tooltip>
 					</Link>
 				</Toolbar>
 			</Container>

@@ -1,5 +1,7 @@
 import User from '../../../models/User';
 import Authenticated from '../../../utils/Authenticated';
+import jwt from 'jsonwebtoken';
+import { sendResetPasswordEmail } from '../../../mailer/mailer';
 
 export default async (req, res) => {
 	switch (req.method) {
@@ -8,6 +10,9 @@ export default async (req, res) => {
 			break;
 		case 'PUT':
 			await changeRole(req, res);
+			break;
+		case 'POST':
+			await forgotPassword(req, res);
 			break;
 	}
 };
@@ -34,3 +39,27 @@ const changeRole = Authenticated(async (req, res) => {
 		res.status(404).json({ success: false });
 	}
 });
+
+const forgotPassword = async (req, res) => {
+	const { email } = req.body;
+	console.log(email);
+	try {
+		const user = await User.findOne({ email });
+		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+
+		if (!user) {
+			return res.status(404).json({ success: false, error: 'User doesnot exist with this email' });
+		} else {
+			user.resetToken = token;
+			user.expireToken = Date.now() + 3600000;
+			await user.save();
+			await sendResetPasswordEmail(user, token);
+			res.json({
+				success: true,
+				message: 'Please, check in your email and follow the instruction to reset your passowrd'
+			});
+		}
+	} catch (err) {
+		res.json({ success: false, error: ' Invalid Email !!' });
+	}
+};

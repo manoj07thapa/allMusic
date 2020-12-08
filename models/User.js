@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema(
 	{
@@ -21,12 +22,18 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			required: true
 		},
+		remember: {
+			type: Boolean,
+			default: false
+		},
 		role: {
 			type: String,
 			required: true,
 			default: 'user',
 			enum: [ 'user', 'admin', 'root' ]
-		}
+		},
+		resetToken: String,
+		expireToken: Date
 	},
 	{
 		timestamps: true
