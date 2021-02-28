@@ -3,43 +3,53 @@ import { parseCookies } from 'nookies';
 import { useRouter } from 'next/router';
 import Button from '@material-ui/core/Button';
 
-import Typography from '@material-ui/core/Typography';
+import { Typography, LinearProgress, FormControl, InputLabel, MenuItem, Select, Grid, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import fetch from 'isomorphic-unfetch';
-import { Formik, Form } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
 
-// const useStyles = makeStyles((theme) => ({
-// 	root: {
-// 		width: '100%',
-// 		'& > * + *': {
-// 			marginTop: theme.spacing(2)
-// 		}
-// 	}
-// }));
+const useStyles = makeStyles((theme) => ({
+	formControl: {
+		margin: theme.spacing(1),
+		minWidth: 120
+	},
+	paper: {
+		margin: 'auto',
+		maxWidth: 500,
+		padding: theme.spacing(3)
+	}
+}));
 
 const initialValues = {
-	name: '',
+	category: '',
+	make: '',
+	model: '',
 	price: '',
 	description: ''
 };
 
 const validationSchema = Yup.object({
-	name: Yup.string().required('Name is required !!'),
-	price: Yup.number().required('Price is required !!'),
-	description: Yup.string().required('Description is required !!')
+	category: Yup.string().required(),
+	make: Yup.string().required(),
+	model: Yup.string().required(),
+	price: Yup.number().required(),
+	description: Yup.string().required()
 });
 
+const categories = [ 'smartphone', 'laptop', 'tab', 'desktop' ];
+
 export default function CreateProduct() {
+	const classes = useStyles();
 	const router = useRouter();
 
 	const [ image, setImage ] = useState('');
 
 	const handleSubmit = async (values, actions) => {
-		console.log(actions);
+		console.log(values);
+		console.log(image);
 		const cloudinaryImage = await imageUpload();
 
 		const res = await fetch('/api/products', {
@@ -85,58 +95,98 @@ export default function CreateProduct() {
 		>
 			{({ errors, isSubmitting }) => (
 				<div>
-					<Typography component="h1" variant="h5">
-						Create Product
-					</Typography>
-
 					<Form>
-						<FormikTextField
-							margin="normal"
-							label="Product name"
-							autoComplete="name"
-							autoFocus
-							type="text"
-							formikKey="name"
-							variant="outlined"
-						/>
-						<br />
-						<FormikTextField
-							margin="normal"
-							label="Price"
-							autoComplete="price"
-							type="number"
-							formikKey="price"
-							variant="outlined"
-						/>
-						<br />
-						<FormikTextField
-							margin="normal"
-							label="Description"
-							autoComplete="description"
-							type="text"
-							formikKey="description"
-							variant="outlined"
-						/>
+						<Paper className={classes.paper}>
+							<Typography component="h1" variant="h5">
+								Create Product
+							</Typography>
+							<Grid container>
+								<Grid item xs={12}>
+									<FormControl variant="outlined" className={classes.formControl}>
+										<InputLabel id="category">Category</InputLabel>
+										<Field name="category" as={Select} id="category" label="Category">
+											{categories.map((category, i) => (
+												<MenuItem value={category} key={i}>
+													<em>{category}</em>
+												</MenuItem>
+											))}
+										</Field>
+									</FormControl>
+								</Grid>
+								<br />
+								<Grid item xs={12}>
+									<FormikTextField
+										margin="normal"
+										label="Product make"
+										autoComplete="make"
+										type="text"
+										formikKey="make"
+										variant="outlined"
+									/>
+								</Grid>
+								<br />
+								<Grid item xs={12}>
+									<FormikTextField
+										margin="normal"
+										label="Product model"
+										autoComplete="model"
+										type="text"
+										formikKey="model"
+										variant="outlined"
+									/>
+								</Grid>
+								<br />
+								<Grid item xs={12}>
+									<FormikTextField
+										margin="normal"
+										label="Price"
+										autoComplete="price"
+										type="number"
+										formikKey="price"
+										variant="outlined"
+									/>
+								</Grid>
+								<br />
+								<Grid item xs={12}>
+									<FormikTextField
+										margin="normal"
+										label="Description"
+										autoComplete="description"
+										type="text"
+										formikKey="description"
+										variant="outlined"
+									/>
+								</Grid>
 
-						<br />
-						<br />
-						<Button variant="contained" component="label">
-							Upload Image
-							<input type="file" hidden accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
-						</Button>
+								<br />
+								<br />
+								<Grid item xs={12}>
+									<Button variant="contained" component="label">
+										Upload Image
+										<input
+											type="file"
+											hidden
+											accept="image/*"
+											onChange={(e) => setImage(e.target.files[0])}
+										/>
+									</Button>
+								</Grid>
 
-						<br />
-						<br />
-						<Button type="submit" variant="contained" color="primary">
-							Create
-						</Button>
+								<br />
+								<br />
+								<Grid item xs={12}>
+									<Button type="submit" variant="contained" color="primary">
+										Create
+									</Button>
+								</Grid>
+								<br />
+								<br />
 
-						<br />
-						<br />
+								{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
 
-						{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
-
-						{isSubmitting && <LinearProgress />}
+								{isSubmitting && <LinearProgress />}
+							</Grid>
+						</Paper>
 					</Form>
 				</div>
 			)}

@@ -2,8 +2,10 @@ import User from '../../../models/User';
 import Authenticated from '../../../utils/Authenticated';
 import jwt from 'jsonwebtoken';
 import { sendResetPasswordEmail } from '../../../mailer/mailer';
+import dbConnect from '../../../utils/dbConnect';
 
 export default async (req, res) => {
+	await dbConnect();
 	switch (req.method) {
 		case 'GET':
 			await getUsers(req, res);

@@ -3,9 +3,8 @@ import User from '../../../models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-dbConnect();
-
 export default async (req, res) => {
+	await dbConnect();
 	console.log(req.body);
 	const { email, password } = req.body;
 	try {

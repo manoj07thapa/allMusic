@@ -4,9 +4,8 @@ import User from '../../../models/User';
 import Cart from '../../../models/Cart';
 import { sendConfirmationEmail } from '../../../mailer/mailer';
 
-dbConnect();
-
 export default async (req, res) => {
+	await dbConnect();
 	const { firstname, lastname, email, password, confirmpassword } = req.body;
 	try {
 		if (!firstname || !email || !password || !confirmpassword) {

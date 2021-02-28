@@ -3,11 +3,23 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
+import Router from 'next/router';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import theme from '../components/theme';
+import { SWRConfig } from 'swr';
+import fetch from 'isomorphic-unfetch';
+import axios from 'axios';
 
 // axios.defaults.baseURL = 'http://localhost:3000';
+// NProgress.configure({ showSpinner: false });
+// Router.events.on('routeChangeStart', () => {
+// 	NProgress.start();
+// });
+// Router.events.on('routeChangeComplete', () => NProgress.done());
+// Router.events.on('routeChangeError', () => NProgress.done());
 
 export default class MyApp extends App {
 	componentDidMount() {
@@ -31,11 +43,11 @@ export default class MyApp extends App {
 					{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
 					<CssBaseline />
 					<Navbar />
-					<Container>
+					<SWRConfig value={{ fetcher: (url) => axios(url).then((r) => r.data) }}>
 						<Box marginTop={2}>
 							<Component {...pageProps} />
 						</Box>
-					</Container>
+					</SWRConfig>
 					<Footer />
 				</ThemeProvider>
 			</React.Fragment>

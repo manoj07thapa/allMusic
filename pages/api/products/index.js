@@ -3,15 +3,9 @@
 import dbConnect from '../../../utils/dbConnect';
 import Product from '../../../models/Product';
 
-dbConnect();
-
 export default async (req, res) => {
-	const { name, price, description } = req.body.values;
-	console.log(name);
-	const { image } = req.body;
-	console.log(image);
-	const { method } = req;
-	switch (method) {
+	await dbConnect();
+	switch (req.method) {
 		case 'GET':
 			try {
 				const products = await Product.find({});
@@ -21,13 +15,17 @@ export default async (req, res) => {
 			}
 			break;
 		case 'POST':
+			const { category, make, model, price, description } = req.body.values;
+			console.log(req.body.values);
+			const { image } = req.body;
 			try {
-				if (!name || !price || !description || !image) {
+				if (!category || !make || !model || !price || !description || !image) {
 					return res.status(404).json({ success: false, error: 'Add all the required fields' });
 				}
-				const product = await new Product({ name, price, description, image }).save();
+				const product = await new Product({ category, make, model, price, description, image }).save();
 				res.status(201).json({ success: true, data: product, message: 'Product Created' });
 			} catch (error) {
+				console.log(error);
 				res.status(400).json({ success: false, error: 'Sorry couldnot create the product' });
 			}
 			break;

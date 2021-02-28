@@ -2,9 +2,8 @@ import bcrypt from 'bcryptjs';
 import dbConnect from '../../../utils/dbConnect';
 import User from '../../../models/User';
 
-dbConnect();
-
 export default async (req, res) => {
+	await dbConnect();
 	const { password, confirmpassword } = req.body.values;
 	const { tokenId } = req.body;
 

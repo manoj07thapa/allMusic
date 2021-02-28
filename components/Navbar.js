@@ -1,12 +1,13 @@
-import { AppBar, Button, Toolbar, Typography, Container, Tooltip, IconButton } from '@material-ui/core';
+import { AppBar, Button, Toolbar, Typography, Container, Tooltip, IconButton, InputBase } from '@material-ui/core';
 import Link from 'next/link';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import Image from 'next/image';
 import { parseCookies } from 'nookies';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import PersonIcon from '@material-ui/icons/Person';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import AccessibleIcon from '@material-ui/icons/Accessible';
+import SearchIcon from '@material-ui/icons/Search';
 import { useRouter } from 'next/router';
 import cookie1 from 'js-cookie';
 
@@ -20,6 +21,43 @@ const useStyles = makeStyles((theme) => ({
 	title: {
 		flexGrow: 1,
 		marginLeft: '1rem'
+	},
+	search: {
+		position: 'relative',
+		borderRadius: theme.shape.borderRadius,
+		backgroundColor: fade(theme.palette.common.white, 0.15),
+		'&:hover': {
+			backgroundColor: fade(theme.palette.common.white, 0.25)
+		},
+		marginRight: theme.spacing(2),
+		marginLeft: 0,
+		width: '100%',
+		[theme.breakpoints.up('sm')]: {
+			marginLeft: theme.spacing(3),
+			width: 'auto'
+		}
+	},
+	searchIcon: {
+		padding: theme.spacing(0, 2),
+		height: '100%',
+		position: 'absolute',
+		pointerEvents: 'none',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	inputRoot: {
+		color: 'inherit'
+	},
+	inputInput: {
+		padding: theme.spacing(1, 1, 1, 0),
+		// vertical padding + font size from searchIcon
+		paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+		transition: theme.transitions.create('width'),
+		width: '100%',
+		[theme.breakpoints.up('md')]: {
+			width: '20ch'
+		}
 	}
 }));
 
@@ -56,6 +94,19 @@ export default function Nav() {
 					<Typography variant="h6" className={classes.title}>
 						Mugicology
 					</Typography>
+					<div className={classes.search}>
+						<div className={classes.searchIcon}>
+							<SearchIcon />
+						</div>
+						<InputBase
+							placeholder="Search…"
+							classes={{
+								root: classes.inputRoot,
+								input: classes.inputInput
+							}}
+							inputProps={{ 'aria-label': 'search' }}
+						/>
+					</div>
 					<Link href="/">
 						<Button color="inherit" component="a">
 							Home
@@ -64,11 +115,18 @@ export default function Nav() {
 
 					{user ? (
 						<div>
-							<Tooltip title="logout">
-								<IconButton color="inherit" component="a" onClick={handleLogout} aria-label="logout">
-									<PersonIcon />
-								</IconButton>
-							</Tooltip>
+							<Link href="/login">
+								<Tooltip title="logout">
+									<IconButton
+										color="inherit"
+										component="a"
+										onClick={handleLogout}
+										aria-label="logout"
+									>
+										<PersonIcon />
+									</IconButton>
+								</Tooltip>
+							</Link>
 						</div>
 					) : (
 						<div>

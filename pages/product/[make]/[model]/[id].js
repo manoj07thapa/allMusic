@@ -4,27 +4,27 @@ import { makeStyles } from '@material-ui/core/styles';
 import fetch from 'isomorphic-unfetch';
 import AddIcon from '@material-ui/icons/Add';
 import { parseCookies } from 'nookies';
-import { Typography, Card, CardActions, CardContent, TextField, Button } from '@material-ui/core';
-import dbConnect from '../../utils/dbConnect';
-import Product from '../../models/Product';
-import Modal from '../../components/Modal';
+import { Typography, Paper, TextField, Button, ButtonBase, Grid } from '@material-ui/core';
+import dbConnect from '../../../../utils/dbConnect';
+import Product from '../../../../models/Product';
+import Modal from '../../../../components/Modal';
 import cookie1 from 'js-cookie';
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		flexGrow: 1
-	},
-	title: {
-		fontSize: 14
-	},
 	paper: {
 		padding: theme.spacing(2),
-		textAlign: 'center',
-		color: theme.palette.text.secondary
+		margin: 'auto'
+	},
+
+	img: {
+		width: '100%'
 	}
 }));
 
-export default function SingleNote({ product }) {
+export default function SingleProduct({ product }) {
+	if (!product || null) {
+		return <h1>This product is un avillable</h1>;
+	}
 	const classes = useStyles();
 	const [ quantity, setQuantity ] = useState(1);
 
@@ -32,6 +32,7 @@ export default function SingleNote({ product }) {
 
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
+	console.log(cookie);
 
 	const addToCart = async () => {
 		try {
@@ -75,7 +76,66 @@ export default function SingleNote({ product }) {
 	}
 
 	return (
-		<Card variant="outlined" className={classes.paper}>
+		<div>
+			<Paper className={classes.paper}>
+				<Grid container spacing={2}>
+					<Grid item xs={12} lg={4}>
+						<img className={classes.img} alt="complex" src={product.image} />
+					</Grid>
+					<Grid item xs={12} lg={6} container>
+						<Grid item xs container direction="column" spacing={2}>
+							<Grid item xs>
+								<Typography gutterBottom variant="h4">
+									{product.make}
+								</Typography>
+								<Typography variant="h5" gutterBottom>
+									Model: {product.model}
+								</Typography>
+
+								<Typography variant="subtitle1"> ${product.price}</Typography>
+								<TextField
+									id="outlined-number"
+									label="Number"
+									type="number"
+									InputLabelProps={{
+										shrink: true
+									}}
+									variant="outlined"
+									value={quantity}
+									onChange={(e) => setQuantity(parseInt(e.target.value))}
+								/>
+							</Grid>
+							<Grid item>
+								<Typography variant="body2" color="textSecondary">
+									{product.description}
+								</Typography>
+							</Grid>
+							<Grid item>
+								<Typography variant="body2" style={{ cursor: 'pointer' }}>
+									{user.role === 'asmin' || user.role === 'root' ? (
+										<Modal handleDelete={handleDelete} />
+									) : null}
+								</Typography>
+							</Grid>
+						</Grid>
+
+						<Grid item>
+							{user ? (
+								<Button color="primary" variant="contained" onClick={addToCart}>
+									<AddIcon /> Add to cart
+								</Button>
+							) : (
+								<Button color="primary" variant="contained" onClick={() => router.push('/login')}>
+									Login To add product
+								</Button>
+							)}
+						</Grid>
+					</Grid>
+				</Grid>
+			</Paper>
+		</div>
+	);
+	/* <Card variant="outlined" className={classes.paper}>
 			<CardContent>
 				<Typography className={classes.title} color="textSecondary" gutterBottom variant="h6">
 					{product.name}
@@ -97,7 +157,7 @@ export default function SingleNote({ product }) {
 			/>
 			{user ? (
 				<Button color="primary" variant="contained" onClick={addToCart}>
-					<AddIcon /> Add Product
+					<AddIcon /> Add to cart
 				</Button>
 			) : (
 				<Button color="primary" variant="contained" onClick={() => router.push('/login')}>
@@ -114,30 +174,35 @@ export default function SingleNote({ product }) {
 			) : null}
 			{/* <CardActions>
 				<Modal handleDelete={handleDelete} />
-			</CardActions> */}
-		</Card>
-	);
+			</CardActions> */
+
+	//</Card> */}
 }
 
 export async function getStaticProps(ctx) {
+	console.log('Context', ctx);
 	const id = ctx.params.id;
 	await dbConnect();
 	const product = await Product.findById(id).lean();
 	product._id = product._id.toString();
 
-	return { props: { product }, revalidate: 3 };
+	return { props: { product: product || null }, revalidate: 3 };
 }
 
 export const getStaticPaths = async () => {
 	await dbConnect();
 	const products = await Product.find({});
-	const productIds = products.map((product) => {
-		return {
-			params: { id: product._id.toString() }
-		};
-	});
+
 	return {
 		fallback: true, //fallback set to false means we dont need this at runtime
-		paths: productIds // params we get in ctx object in getStaticProps function, only ids sent via paths are statically served at buildtime
+		paths: products.map((p) => {
+			return {
+				params: {
+					id: p._id.toString(),
+					make: p.make.toString(),
+					model: p.model.toString()
+				}
+			};
+		}) // params we get in ctx object in getStaticProps function, only ids sent via paths are statically served at buildtime
 	};
 };

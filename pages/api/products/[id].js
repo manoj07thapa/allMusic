@@ -1,9 +1,8 @@
 import dbConnect from '../../../utils/dbConnect';
 import Product from '../../../models/Product';
 
-dbConnect();
-
 export default async (req, res) => {
+	await dbConnect();
 	const { query: { id }, method } = req;
 
 	switch (method) {

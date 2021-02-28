@@ -2,9 +2,8 @@ import Cart from '../../models/Cart';
 import Authenticated from '../../utils/Authenticated';
 import dbConnect from '../../utils/dbConnect';
 
-dbConnect();
-
 export default async (req, res) => {
+	await dbConnect();
 	switch (req.method) {
 		case 'PUT':
 			await addProduct(req, res);
@@ -17,6 +16,8 @@ export default async (req, res) => {
 
 const addProduct = Authenticated(async (req, res) => {
 	const { quantity, productId } = req.body;
+	console.log(quantity, productId);
+	console.log(req.userId);
 
 	try {
 		const cart = await Cart.findOne({ user: req.userId });

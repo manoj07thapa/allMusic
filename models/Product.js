@@ -1,10 +1,19 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ProductSchema = new mongoose.Schema({
-	name: {
+	category: {
+		type: String,
+		required: [ true, 'Please add a category' ]
+	},
+
+	make: {
 		type: String,
 		required: [ true, 'Please add a title' ],
-		unique: true,
+		maxlength: [ 40, 'Title cannot be more than 40 characters' ]
+	},
+	model: {
+		type: String,
+		required: [ true, 'Please add a title' ],
 		maxlength: [ 40, 'Title cannot be more than 40 characters' ]
 	},
 	price: {
@@ -14,12 +23,15 @@ const ProductSchema = new mongoose.Schema({
 	description: {
 		type: String,
 		required: true,
-		maxlength: [ 200, 'Description cannot be more than 200 characters' ]
+		maxlength: [ 1000, 'Description cannot be more than 1000 characters' ]
 	},
 	image: {
 		type: String,
 		required: true
+	},
+	rating: {
+		type: Number
 	}
 });
 
-module.exports = mongoose.models.Product || mongoose.model('Product', ProductSchema);
+export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
