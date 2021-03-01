@@ -1,18 +1,29 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import deepEqual from 'fast-deep-equal';
 import useSwr from 'swr';
+import { stringify } from 'querystring';
 import dbConnect from '../utils/dbConnect';
 import { Formik, Form, Field, useField, useFormikContext } from 'formik';
-import router, { useRouter } from 'next/router';
-import { Paper, Grid, makeStyles, FormControl, MenuItem, InputLabel, Select, Button } from '@material-ui/core';
-import Pagination from '@material-ui/lab/Pagination';
-import PaginationItem from '@material-ui/lab/PaginationItem';
+import { useRouter } from 'next/router';
+import {
+	Paper,
+	Grid,
+	makeStyles,
+	FormControl,
+	MenuItem,
+	Typography,
+	InputLabel,
+	Select,
+	Button
+} from '@material-ui/core';
 import { getAsString } from '../utils/getAsString';
 import { getCategories } from '../dbQuery/getCatogories';
 import { getMakes } from '../dbQuery/getMakes';
 import { getModels } from '../dbQuery/getModels';
 import { getPaginatedProducts } from '../dbQuery/getPaginatedProducts';
+import ProductPagination from '../components/ProductPagination';
+import ProductCard from '../components/ProductCard';
 
 const prices = [ 5000, 10000, 20000, 50000, 100000, 200000, 500000 ];
 
@@ -23,12 +34,18 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function Products({ categories, makes, models, products, totalPages }) {
-	const finalProducts = JSON.parse(products);
-
+export default function Products({ categories, makes, models, ssProducts, totalPages }) {
+	const products = JSON.parse(ssProducts);
 	const classes = useStyles();
 
 	const { query } = useRouter();
+	const router = useRouter();
+	const [ serverQuery ] = useState(query);
+
+	const { data } = useSwr('/api/products?' + stringify(query), {
+		dedupingInterval: 60000,
+		initialData: deepEqual(query, serverQuery) ? { products, totalPages } : undefined
+	});
 
 	const initialValues = {
 		category: getAsString(query.category) || 'all',
@@ -39,6 +56,7 @@ export default function Products({ categories, makes, models, products, totalPag
 	};
 
 	const handleSubmit = (values) => {
+		console.log('form values', values);
 		router.push(
 			{
 				pathname: '/products',
@@ -55,9 +73,9 @@ export default function Products({ categories, makes, models, products, totalPag
 				<title>Shopify</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<h1>Product page</h1>
+			<Typography variant="h2">Product page</Typography>
 			<Grid container>
-				<Grid item xs={12} sm={4}>
+				<Grid item xs={12} sm={3}>
 					<Formik initialValues={initialValues} onSubmit={handleSubmit}>
 						{({ values }) => (
 							<Form>
@@ -141,7 +159,7 @@ export default function Products({ categories, makes, models, products, totalPag
 											</FormControl>
 										</Grid>
 										<Grid item xs={12}>
-											<Button type="Submit" variant="contained" fullWidth color="primary">
+											<Button type="submit" variant="contained" fullWidth color="primary">
 												Search
 											</Button>
 										</Grid>
@@ -151,30 +169,21 @@ export default function Products({ categories, makes, models, products, totalPag
 						)}
 					</Formik>
 				</Grid>
-				<Grid item xs={12} sm={8}>
-					<Pagination
-						page={parseInt(getAsString(query.page) || '1')}
-						count={totalPages}
-						renderItem={(item) => (
-							<PaginationItem component={MaterialUiLink} query={query} item={item} {...item} />
-						)}
-					/>
-					<pre style={{ fontSize: '3rem' }}>{JSON.stringify({ totalPages, finalProducts }, null, 4)}</pre>
+				<Grid container item xs={12} sm={8} spacing={5}>
+					<Grid item xs={12}>
+						<ProductPagination totalPages={data ? data.totalPages : totalPages} />
+					</Grid>
+					{(data ? data.products : products || []).map((product) => (
+						<Grid item xs={12} sm={4} key={product._id}>
+							<ProductCard product={product} />
+						</Grid>
+					))}
+					<Grid item xs={12}>
+						<ProductPagination totalPages={data ? data.totalPages : totalPages} />
+					</Grid>
 				</Grid>
 			</Grid>
 		</div>
-	);
-}
-export function MaterialUiLink({ query, item, ...props }) {
-	return (
-		<Link
-			href={{
-				path: '/products',
-				query: { ...query, page: item.page }
-			}}
-		>
-			<a {...props} />
-		</Link>
 	);
 }
 
@@ -229,7 +238,6 @@ export function MakeSelect({ initialCategory, makes, category, ...props }) {
 	);
 }
 
-//custom Select field for Model
 export function ModelSelect({ initialMake, models, category, make, ...props }) {
 	const { setFieldValue } = useFormikContext();
 	const [ field ] = useField({
@@ -250,18 +258,7 @@ export function ModelSelect({ initialMake, models, category, make, ...props }) {
 		},
 		[ newModels, make ]
 	);
-	//we call api for new data set of model when user changes make in the select dropdown
-	// const { data } = useSwr(`/api/models?category=${category}&make=${make}`);
-	// const { data } = useSwr(`/api/models?category=${category}&make=${make}`, {
-	// 	dedupingInterval: 60000,
-	// 	onSuccess: (newValues) => {
-	// 		if (!newValues.map((a) => a._id).includes(field.value)) {
-	// 			setFieldValue('model', 'all');
-	// 		}
-	// 	}
-	// });
-	//if no new make is selected we use models from serverside if not the we use newly fetched data from swr
-	// const newModels = data || models;
+
 	return (
 		<FormControl variant="outlined" fullWidth>
 			<InputLabel id="search-model">Choose Model</InputLabel>
@@ -294,12 +291,10 @@ export const getServerSideProps = async (ctx) => {
 		getModels(category, make),
 		getPaginatedProducts(ctx.query)
 	]);
-	console.log('paginated products:', pagination);
-	console.log('type of pagination', typeof pagination.products);
-	const products = JSON.stringify(pagination.products);
-	// const products = pagination.products;
+
+	const ssProducts = JSON.stringify(pagination.products);
 
 	return {
-		props: { categories, makes, models, products, totalPages: pagination.totalPages }
+		props: { categories, makes, models, ssProducts, totalPages: pagination.totalPages }
 	};
 };

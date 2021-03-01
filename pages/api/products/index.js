@@ -2,14 +2,15 @@
 
 import dbConnect from '../../../utils/dbConnect';
 import Product from '../../../models/Product';
+import { getPaginatedProducts } from '../../../dbQuery/getPaginatedProducts';
 
 export default async (req, res) => {
 	await dbConnect();
 	switch (req.method) {
 		case 'GET':
 			try {
-				const products = await Product.find({});
-				res.status(200).json({ success: true, data: products });
+				const products = await getPaginatedProducts(req.query);
+				res.status(200).json(products);
 			} catch (error) {
 				res.status(400).json({ success: false, error: 'Sorry couldnot find products' });
 			}
