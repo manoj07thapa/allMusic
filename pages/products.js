@@ -39,6 +39,8 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 	const classes = useStyles();
 
 	const { query } = useRouter();
+	console.log('Query', query);
+	const searchQuery = query.search;
 	const router = useRouter();
 	const [ serverQuery ] = useState(query);
 
@@ -70,7 +72,7 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 	return (
 		<div>
 			<Head>
-				<title>Shopify</title>
+				<title>Shopify || Products</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Typography variant="h2">Product page</Typography>

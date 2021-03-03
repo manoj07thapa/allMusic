@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
+import Head from 'next/head';
 import fetch from 'isomorphic-unfetch';
 import AddIcon from '@material-ui/icons/Add';
 import { parseCookies } from 'nookies';
@@ -77,6 +78,10 @@ export default function SingleProduct({ product }) {
 
 	return (
 		<div>
+			<Head>
+				<title>{product.make + '' + product.model}</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
 			<Paper className={classes.paper}>
 				<Grid container spacing={2}>
 					<Grid item xs={12} lg={4}>
@@ -135,48 +140,6 @@ export default function SingleProduct({ product }) {
 			</Paper>
 		</div>
 	);
-	/* <Card variant="outlined" className={classes.paper}>
-			<CardContent>
-				<Typography className={classes.title} color="textSecondary" gutterBottom variant="h6">
-					{product.name}
-				</Typography>
-				<Typography variant="body2" component="p">
-					{product.description}
-				</Typography>
-			</CardContent>
-			<TextField
-				id="outlined-number"
-				label="Number"
-				type="number"
-				InputLabelProps={{
-					shrink: true
-				}}
-				variant="outlined"
-				value={quantity}
-				onChange={(e) => setQuantity(parseInt(e.target.value))}
-			/>
-			{user ? (
-				<Button color="primary" variant="contained" onClick={addToCart}>
-					<AddIcon /> Add to cart
-				</Button>
-			) : (
-				<Button color="primary" variant="contained" onClick={() => router.push('/login')}>
-					Login To add product
-				</Button>
-			)}
-
-			<br />
-			<br />
-			{user.role === 'asmin' || user.role === 'root' ? (
-				<CardActions>
-					<Modal handleDelete={handleDelete} />
-				</CardActions>
-			) : null}
-			{/* <CardActions>
-				<Modal handleDelete={handleDelete} />
-			</CardActions> */
-
-	//</Card> */}
 }
 
 export async function getStaticProps(ctx) {
@@ -191,7 +154,7 @@ export async function getStaticProps(ctx) {
 
 export const getStaticPaths = async () => {
 	await dbConnect();
-	const products = await Product.find({});
+	const products = await Product.find({}).limit(5);
 
 	return {
 		fallback: true, //fallback set to false means we dont need this at runtime

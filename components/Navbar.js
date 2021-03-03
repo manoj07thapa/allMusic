@@ -6,10 +6,9 @@ import { parseCookies } from 'nookies';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import PersonIcon from '@material-ui/icons/Person';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import AccessibleIcon from '@material-ui/icons/Accessible';
-import SearchIcon from '@material-ui/icons/Search';
 import { useRouter } from 'next/router';
 import cookie1 from 'js-cookie';
+import Search from './Search';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -66,17 +65,6 @@ export default function Nav() {
 
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
-	// console.log(user);
-	// let normalUser = false;
-	// let admin = false;
-	// if (token && user.role === 'user') {
-	// 	normalUser = true;
-	// } else if (token && user.role === 'admin') {
-	// 	admin = true;
-	// } else {
-	// 	normalUser = false;
-	// 	admin = false;
-	// }
 
 	const router = useRouter();
 
@@ -94,7 +82,8 @@ export default function Nav() {
 					<Typography variant="h6" className={classes.title}>
 						Mugicology
 					</Typography>
-					<div className={classes.search}>
+					<Search />
+					{/* <div className={classes.search}>
 						<div className={classes.searchIcon}>
 							<SearchIcon />
 						</div>
@@ -106,7 +95,7 @@ export default function Nav() {
 							}}
 							inputProps={{ 'aria-label': 'search' }}
 						/>
-					</div>
+					</div> */}
 					<Link href="/">
 						<Button color="inherit" component="a">
 							Home

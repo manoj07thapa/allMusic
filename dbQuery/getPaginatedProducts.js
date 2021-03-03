@@ -9,6 +9,8 @@ export async function getPaginatedProducts(query) {
 	// 	make: getValueStr(query.make),
 	// 	model: getValueStr(query.model)
 	// };
+	const search = getAsString(query.search);
+	console.log('querySearch', search);
 
 	const make = getValueStr(query.make);
 	const category = getValueStr(query.category);
@@ -18,13 +20,11 @@ export async function getPaginatedProducts(query) {
 	const page = getValueNumber(query.page) || 1;
 	const productsPerPage = getValueNumber(query.productsPerPage) || 4; //products perpage
 	const skip = (page - 1) * productsPerPage;
-	console.log('category:', category);
-	console.log('minprice:', minPrice);
-	console.log(' type of minprice:', typeof minPrice);
 
 	let params = {};
-
-	if (!category && !minPrice && !maxPrice) {
+	if (search) {
+		params = { $text: { $search: search } };
+	} else if (!category && !minPrice && !maxPrice) {
 		params = {};
 	} else if (category && !make) {
 		params = { category };
@@ -47,7 +47,6 @@ export async function getPaginatedProducts(query) {
 	} else if (category && maxPrice && minPrice) {
 		params = { category, price: { $gte: minPrice, $lte: maxPrice } };
 	}
-
 	const productsPromise = Product.find(params).limit(productsPerPage).skip(skip);
 	// const products = await Product.find({ price: { $gte: minPrice } });
 	const totalProductsPromise = Product.find(params).count();
