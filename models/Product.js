@@ -25,8 +25,8 @@ const ProductSchema = new mongoose.Schema({
 		required: true,
 		maxlength: [ 1000, 'Description cannot be more than 1000 characters' ]
 	},
-	image: {
-		type: String,
+	files: {
+		type: [ {} ],
 		required: true
 	},
 	rating: {

@@ -9,6 +9,9 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import { useRouter } from 'next/router';
 import cookie1 from 'js-cookie';
 import Search from './Search';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
+import Brightness7Icon from '@material-ui/icons/Brightness7';
+import { darkTheme, lightTheme } from './theme';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -60,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function Nav() {
+export default function Nav({ setTheme, isDarkTheme }) {
 	const classes = useStyles();
 
 	const cookie = parseCookies();
@@ -77,7 +80,7 @@ export default function Nav() {
 	return (
 		<AppBar position="static">
 			<Container>
-				<Toolbar>
+				<Toolbar variant="dense">
 					<Image src="/shoppify.jpg" layout="fixed" width={30} height={30} alt="shopping" />
 					<Typography variant="h6" className={classes.title}>
 						Mugicology
@@ -157,6 +160,15 @@ export default function Nav() {
 							</IconButton>
 						</Tooltip>
 					</Link>
+					<IconButton
+						aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
+						onClick={() => {
+							const newTheme = isDarkTheme ? lightTheme : darkTheme;
+							setTheme(newTheme);
+						}}
+					>
+						{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
+					</IconButton>
 				</Toolbar>
 			</Container>
 		</AppBar>

@@ -16,14 +16,13 @@ export default async (req, res) => {
 			}
 			break;
 		case 'POST':
-			const { category, make, model, price, description } = req.body.values;
+			const { category, make, model, price, files, description } = req.body.values;
 			console.log(req.body.values);
-			const { image } = req.body;
 			try {
-				if (!category || !make || !model || !price || !description || !image) {
+				if (!category || !make || !model || !price || !description || !files) {
 					return res.status(404).json({ success: false, error: 'Add all the required fields' });
 				}
-				const product = await new Product({ category, make, model, price, description, image }).save();
+				const product = await new Product({ category, make, model, price, description, files }).save();
 				res.status(201).json({ success: true, data: product, message: 'Product Created' });
 			} catch (error) {
 				console.log(error);

@@ -7,9 +7,10 @@ import { Typography, LinearProgress, FormControl, InputLabel, MenuItem, Select, 
 import { makeStyles } from '@material-ui/core/styles';
 import fetch from 'isomorphic-unfetch';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import { array, object, string, number } from 'yup';
 import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
+import { MultipleFileUploadField } from '../components/uploads/MultipleFileUploadField';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -28,15 +29,21 @@ const initialValues = {
 	make: '',
 	model: '',
 	price: '',
+	files: [],
 	description: ''
 };
 
-const validationSchema = Yup.object({
-	category: Yup.string().required(),
-	make: Yup.string().required(),
-	model: Yup.string().required(),
-	price: Yup.number().required(),
-	description: Yup.string().required()
+const validationSchema = object({
+	category: string().required(),
+	make: string().required(),
+	model: string().required(),
+	price: number().required(),
+	files: array(
+		object({
+			url: string().required()
+		})
+	),
+	description: string().required()
 });
 
 const categories = [ 'smartphone', 'laptop', 'tab', 'desktop' ];
@@ -45,12 +52,9 @@ export default function CreateProduct() {
 	const classes = useStyles();
 	const router = useRouter();
 
-	const [ image, setImage ] = useState('');
-
 	const handleSubmit = async (values, actions) => {
 		console.log(values);
-		console.log(image);
-		const cloudinaryImage = await imageUpload();
+		// const cloudinaryImage = await imageUpload();
 
 		const res = await fetch('/api/products', {
 			method: 'POST',
@@ -58,7 +62,7 @@ export default function CreateProduct() {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ values, image: cloudinaryImage })
+			body: JSON.stringify({ values })
 		});
 		const data = await res.json();
 		if (data.success === false) {
@@ -70,19 +74,19 @@ export default function CreateProduct() {
 		console.log(data);
 		// router.push('/');
 	};
-
-	const imageUpload = async () => {
-		const formData = new FormData();
-		formData.append('file', image);
-		formData.append('upload_preset', 'mystore'); //my store is a store in cloudinary
-		formData.append('cloud_name', 'karma-777'); //karma-777 is is my cloud name in cloudinary
-		const res = await fetch('https://api.cloudinary.com/v1_1/karma-777/image/upload', {
-			method: 'POST',
-			body: formData
-		});
-		const data = await res.json();
-		return data.url;
-	};
+	// this is a single file upload system for cloudinary
+	// const imageUpload = async () => {
+	// 	const formData = new FormData();
+	// 	formData.append('file', image);
+	// 	formData.append('upload_preset', 'mystore'); //my store is a store in cloudinary
+	// 	formData.append('cloud_name', 'karma-777'); //karma-777 is is my cloud name in cloudinary
+	// 	const res = await fetch('https://api.cloudinary.com/v1_1/karma-777/image/upload', {
+	// 		method: 'POST',
+	// 		body: formData
+	// 	});
+	// 	const data = await res.json();
+	// 	return data.url;
+	// };
 
 	// const Image = () => <div>{image ? <p>{image}</p> : null}</div>;
 
@@ -93,7 +97,7 @@ export default function CreateProduct() {
 			validationSchema={validationSchema}
 			validateOnBlur={false}
 		>
-			{({ errors, isSubmitting }) => (
+			{({ values, errors, isSubmitting, isValid }) => (
 				<div>
 					<Form>
 						<Paper className={classes.paper}>
@@ -148,6 +152,9 @@ export default function CreateProduct() {
 								</Grid>
 								<br />
 								<Grid item xs={12}>
+									<MultipleFileUploadField name="files" />
+								</Grid>
+								<Grid item xs={12}>
 									<FormikTextField
 										margin="normal"
 										label="Description"
@@ -160,8 +167,8 @@ export default function CreateProduct() {
 
 								<br />
 								<br />
-								<Grid item xs={12}>
-									<Button variant="contained" component="label">
+								{/* <Grid item xs={12}>
+									<Button variant="contained" component="label" disabled={!isValid || isSubmitting}>
 										Upload Image
 										<input
 											type="file"
@@ -170,12 +177,17 @@ export default function CreateProduct() {
 											onChange={(e) => setImage(e.target.files[0])}
 										/>
 									</Button>
-								</Grid>
+								</Grid> */}
 
 								<br />
 								<br />
 								<Grid item xs={12}>
-									<Button type="submit" variant="contained" color="primary">
+									<Button
+										type="submit"
+										variant="contained"
+										color="primary"
+										disabled={!isValid || isSubmitting}
+									>
 										Create
 									</Button>
 								</Grid>
