@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SingleProduct({ product, suggestedProducts }) {
 	const suggestion = JSON.parse(suggestedProducts);
-	console.log('Suggestion:', suggestion);
 
 	if (!product || null) {
 		return <h1>This product is un avillable</h1>;
