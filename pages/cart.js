@@ -29,7 +29,6 @@ export default function CartPage({ error, products }) {
 	if (!products) {
 		return <h1>No products in cart</h1>;
 	}
-	console.log(products);
 	const classes = useStyles();
 
 	const [ cartProducts, setCartProducts ] = useState(products);
@@ -104,13 +103,15 @@ export default function CartPage({ error, products }) {
 		console.log(data);
 	};
 
+	// const image = product.files.map((file) => file.url);
+
 	const CartItems = () => (
 		<Fragment>
 			{cartProducts.map((item) => (
 				<Grid container spacing={3} className={classes.root} key={item.product._id}>
 					<Grid item xs={12} lg={4}>
 						<Paper className={classes.paper}>
-							<img src={item.product.image} alt="d" style={{ height: 250, width: 250 }} />
+							<img src={item.product.files[0].url} alt="d" style={{ height: 250, width: 250 }} />
 							<div style={{ marginLeft: 250 }}>
 								<Typography variant="h2">{item.product.name}</Typography>
 								<Typography variant="h5">Rs {item.product.price}</Typography>

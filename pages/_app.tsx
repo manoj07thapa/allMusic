@@ -8,6 +8,7 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+import MainNav from '../components/MainNav';
 import { darkTheme } from '../components/theme';
 import { SWRConfig } from 'swr';
 import axios from 'axios';
@@ -47,6 +48,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 				{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
 				<CssBaseline />
 				<Navbar isDarkTheme={isDarkTheme} setTheme={setTheme} />
+				<MainNav />
 				<SWRConfig value={{ fetcher: (url) => axios(url).then((r) => r.data) }}>
 					<Box marginTop={2}>
 						<Component {...pageProps} />

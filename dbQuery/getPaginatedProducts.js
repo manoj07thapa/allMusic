@@ -2,15 +2,7 @@ import { getAsString } from '../utils/getAsString';
 import Product from '../models/Product';
 
 export async function getPaginatedProducts(query) {
-	// const { category, make, model } = query;
-
-	// const filters = {
-	// 	category: getValueStr(query.category),
-	// 	make: getValueStr(query.make),
-	// 	model: getValueStr(query.model)
-	// };
 	const search = getAsString(query.search);
-	console.log('querySearch', search);
 
 	const make = getValueStr(query.make);
 	const category = getValueStr(query.category);
@@ -49,17 +41,15 @@ export async function getPaginatedProducts(query) {
 	}
 	const productsPromise = Product.find(params).limit(productsPerPage).skip(skip);
 	// const products = await Product.find({ price: { $gte: minPrice } });
-	const totalProductsPromise = Product.find(params).count();
+	const totalProductsPromise = Product.find(params).countDocuments();
 	const [ products, totalProducts ] = await Promise.all([ productsPromise, totalProductsPromise ]);
 
-	console.log('Total Products', totalProducts);
 	const totalPages = Math.ceil(totalProducts / productsPerPage);
-	console.log('TotalPages:', totalPages);
 
 	return { products, totalPages };
 }
 
-function getValueNumber(value) {
+export function getValueNumber(value) {
 	const str = getValueStr(value);
 	const number = parseInt(str);
 	return isNaN(number) ? null : number;

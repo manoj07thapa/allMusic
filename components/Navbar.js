@@ -78,99 +78,83 @@ export default function Nav({ setTheme, isDarkTheme }) {
 	};
 
 	return (
-		<AppBar position="static">
-			<Container>
-				<Toolbar variant="dense">
-					<Image src="/shoppify.jpg" layout="fixed" width={30} height={30} alt="shopping" />
-					<Typography variant="h6" className={classes.title}>
-						Mugicology
-					</Typography>
-					<Search />
-					{/* <div className={classes.search}>
-						<div className={classes.searchIcon}>
-							<SearchIcon />
-						</div>
-						<InputBase
-							placeholder="Search…"
-							classes={{
-								root: classes.inputRoot,
-								input: classes.inputInput
+		<div className={classes.root}>
+			<AppBar position="static">
+				<Container>
+					<Toolbar>
+						<Image src="/shoppify.jpg" layout="fixed" width={30} height={30} alt="shopping" />
+						<Typography variant="h6" className={classes.title}>
+							Mugicology
+						</Typography>
+						<Search />
+						<Link href="/cart">
+							<Tooltip title="Shopping cart">
+								<IconButton color="inherit" component="a" aria-label="Shopping cart">
+									<ShoppingBasketIcon />
+								</IconButton>
+							</Tooltip>
+						</Link>
+
+						{user ? (
+							<div>
+								<Link href="/login">
+									<Tooltip title="logout">
+										<IconButton
+											color="inherit"
+											component="a"
+											onClick={handleLogout}
+											aria-label="logout"
+										>
+											<PersonIcon />
+										</IconButton>
+									</Tooltip>
+								</Link>
+							</div>
+						) : (
+							<div>
+								<Link href="/signup">
+									<Button color="inherit" component="a">
+										Signup
+									</Button>
+								</Link>
+
+								<Link href="/login">
+									<Button color="inherit" component="a">
+										Login
+									</Button>
+								</Link>
+							</div>
+						)}
+						{user.role === 'admin' || user.role === 'root' ? (
+							<div>
+								<Link href="/createProduct">
+									<Button color="inherit" component="a">
+										Create
+									</Button>
+								</Link>
+
+								<Link href="/dashboard">
+									<Tooltip title="Dashboard">
+										<IconButton color="inherit" component="a" aria-label="Dashboard">
+											<DashboardIcon />
+										</IconButton>
+									</Tooltip>
+								</Link>
+							</div>
+						) : null}
+
+						<IconButton
+							aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
+							onClick={() => {
+								const newTheme = isDarkTheme ? lightTheme : darkTheme;
+								setTheme(newTheme);
 							}}
-							inputProps={{ 'aria-label': 'search' }}
-						/>
-					</div> */}
-					<Link href="/">
-						<Button color="inherit" component="a">
-							Home
-						</Button>
-					</Link>
-
-					{user ? (
-						<div>
-							<Link href="/login">
-								<Tooltip title="logout">
-									<IconButton
-										color="inherit"
-										component="a"
-										onClick={handleLogout}
-										aria-label="logout"
-									>
-										<PersonIcon />
-									</IconButton>
-								</Tooltip>
-							</Link>
-						</div>
-					) : (
-						<div>
-							<Link href="/signup">
-								<Button color="inherit" component="a">
-									Signup
-								</Button>
-							</Link>
-
-							<Link href="/login">
-								<Button color="inherit" component="a">
-									Login
-								</Button>
-							</Link>
-						</div>
-					)}
-					{user.role === 'admin' || user.role === 'root' ? (
-						<div>
-							<Link href="/createProduct">
-								<Button color="inherit" component="a">
-									Create
-								</Button>
-							</Link>
-
-							<Link href="/dashboard">
-								<Tooltip title="Dashboard">
-									<IconButton color="inherit" component="a" aria-label="Dashboard">
-										<DashboardIcon />
-									</IconButton>
-								</Tooltip>
-							</Link>
-						</div>
-					) : null}
-
-					<Link href="/cart">
-						<Tooltip title="Shopping cart">
-							<IconButton color="inherit" component="a" aria-label="Shopping cart">
-								<ShoppingBasketIcon />
-							</IconButton>
-						</Tooltip>
-					</Link>
-					<IconButton
-						aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
-						onClick={() => {
-							const newTheme = isDarkTheme ? lightTheme : darkTheme;
-							setTheme(newTheme);
-						}}
-					>
-						{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
-					</IconButton>
-				</Toolbar>
-			</Container>
-		</AppBar>
+						>
+							{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
+						</IconButton>
+					</Toolbar>
+				</Container>
+			</AppBar>
+		</div>
 	);
 }

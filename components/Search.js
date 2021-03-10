@@ -1,12 +1,6 @@
-import { Grid, Paper, InputBase, makeStyles, fade, TextField } from '@material-ui/core';
-import { useState, useEffect } from 'react';
-import fetch from 'isomorphic-unfetch';
+import { InputBase, makeStyles, fade } from '@material-ui/core';
 import { Formik, Form, Field } from 'formik';
-import { FormikTextField } from '../hooks/FormikTextField';
 import { useRouter } from 'next/router';
-import { getAsString } from '../utils/getAsString';
-import { stringify } from 'querystring';
-import AccessibleIcon from '@material-ui/icons/Accessible';
 import SearchIcon from '@material-ui/icons/Search';
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Search() {
 	const { query } = useRouter();
-	console.log(query);
 	const router = useRouter();
 	const classes = useStyles();
 	const initialValues = {
@@ -59,7 +52,6 @@ export default function Search() {
 	};
 
 	const handleSubmit = async (values) => {
-		console.log('form values', values);
 		router.push(
 			{
 				pathname: '/products',
@@ -68,20 +60,6 @@ export default function Search() {
 			undefined,
 			{ shallow: true }
 		);
-		// try {
-		// 	const res = await fetch('/api/searchProducts', {
-		// 		method: 'POST',
-		// 		headers: {
-		// 			Accept: 'application/json',
-		// 			'Content-Type': 'application/json'
-		// 		},
-		// 		body: JSON.stringify({ query: values.search })
-		// 	});
-		// 	const data = await res.json();
-		// 	console.log(data);
-		// } catch (error) {
-		// 	console.log(error);
-		// }
 	};
 
 	return (

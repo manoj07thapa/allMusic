@@ -5,16 +5,19 @@ import Head from 'next/head';
 import fetch from 'isomorphic-unfetch';
 import AddIcon from '@material-ui/icons/Add';
 import { parseCookies } from 'nookies';
-import { Typography, Paper, TextField, Button, ButtonBase, Grid } from '@material-ui/core';
+import { Typography, Paper, TextField, Button, ButtonBase, Grid, Container } from '@material-ui/core';
 import dbConnect from '../../../../utils/dbConnect';
 import Product from '../../../../models/Product';
 import Modal from '../../../../components/Modal';
 import cookie1 from 'js-cookie';
+import Carousel from '../../../../components/Carousel';
+import SuggestedCarousel from '../../../../components/SuggestedCarousel';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		padding: theme.spacing(2),
-		margin: 'auto'
+		margin: 'auto',
+		textAlign: 'center'
 	},
 
 	img: {
@@ -22,7 +25,10 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function SingleProduct({ product }) {
+export default function SingleProduct({ product, suggestedProducts }) {
+	const suggestion = JSON.parse(suggestedProducts);
+	console.log('Suggestion:', suggestion);
+
 	if (!product || null) {
 		return <h1>This product is un avillable</h1>;
 	}
@@ -30,10 +36,10 @@ export default function SingleProduct({ product }) {
 	const [ quantity, setQuantity ] = useState(1);
 
 	const router = useRouter();
+	console.log(router);
 
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
-	console.log(cookie);
 
 	const addToCart = async () => {
 		try {
@@ -46,12 +52,7 @@ export default function SingleProduct({ product }) {
 				body: JSON.stringify({ quantity, productId: product._id })
 			});
 			const data = await res.json();
-			console.log(data);
-			// if (res.status === 200) {
-			// 	router.push('/');
-			// }
 		} catch (error) {
-			console.log(error);
 			cookie1.remove('user');
 			cookie1.remove('token');
 			router.push('/login');
@@ -83,9 +84,9 @@ export default function SingleProduct({ product }) {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Paper className={classes.paper}>
-				<Grid container spacing={2}>
+				<Grid container spacing={5}>
 					<Grid item xs={12} lg={4}>
-						<img className={classes.img} alt="complex" src={product.image} />
+						<Carousel product={product} />
 					</Grid>
 					<Grid item xs={12} lg={6} container>
 						<Grid item xs container direction="column" spacing={2}>
@@ -117,7 +118,7 @@ export default function SingleProduct({ product }) {
 							</Grid>
 							<Grid item>
 								<Typography variant="body2" style={{ cursor: 'pointer' }}>
-									{user.role === 'asmin' || user.role === 'root' ? (
+									{user.role === 'admin' || user.role === 'root' ? (
 										<Modal handleDelete={handleDelete} />
 									) : null}
 								</Typography>
@@ -138,18 +139,32 @@ export default function SingleProduct({ product }) {
 					</Grid>
 				</Grid>
 			</Paper>
+			<Grid container spacing={5}>
+				<Container>
+					<Paper className={classes.paper}>
+						<Grid item xs={10}>
+							<SuggestedCarousel suggestedProducts={suggestion} />
+						</Grid>
+					</Paper>
+				</Container>
+			</Grid>
 		</div>
 	);
 }
 
 export async function getStaticProps(ctx) {
-	console.log('Context', ctx);
 	const id = ctx.params.id;
+	const category = ctx.params.category;
+	const make = ctx.params.make;
 	await dbConnect();
 	const product = await Product.findById(id).lean();
 	product._id = product._id.toString();
 
-	return { props: { product: product || null }, revalidate: 3 };
+	//querying for similar products suggestion in individual product page
+	const res = await Product.find({ category, make }).limit(10);
+	const suggestedProducts = JSON.stringify(res);
+
+	return { props: { product, suggestedProducts }, revalidate: 3 };
 }
 
 export const getStaticPaths = async () => {
@@ -162,6 +177,7 @@ export const getStaticPaths = async () => {
 			return {
 				params: {
 					id: p._id.toString(),
+					category: p.category.toString(),
 					make: p.make.toString(),
 					model: p.model.toString()
 				}

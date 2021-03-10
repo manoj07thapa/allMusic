@@ -22,8 +22,10 @@ const useStyles = makeStyles((theme) => ({
 export default function ProductCard({ product }) {
 	const classes = useStyles();
 
+	const image = product.files.map((file) => file.url);
+
 	return (
-		<Link href={`/product/${product.make}/${product.model}/${product._id}`}>
+		<Link href={`/${product.category}/${product.make}/${product.model}/${product._id}`}>
 			<a className={classes.anchorTag}>
 				<Card className={classes.root}>
 					<CardHeader
@@ -40,16 +42,12 @@ export default function ProductCard({ product }) {
 						title={product.make + '' + product.model}
 						subheader={`Rs. ${product.price}`}
 					/>
-					<CardMedia
-						className={classes.media}
-						image={product.image}
-						title={product.make + '' + product.model}
-					/>
-					<CardContent>
+					<CardMedia className={classes.media} image={image[0]} title={product.make + '' + product.model} />
+					{/* <CardContent>
 						<Typography variant="body2" color="textSecondary" component="p">
 							{product.description}
 						</Typography>
-					</CardContent>
+					</CardContent> */}
 				</Card>
 			</a>
 		</Link>

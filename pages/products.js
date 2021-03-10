@@ -39,7 +39,6 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 	const classes = useStyles();
 
 	const { query } = useRouter();
-	console.log('Query', query);
 	const searchQuery = query.search;
 	const router = useRouter();
 	const [ serverQuery ] = useState(query);
