@@ -26,8 +26,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SingleProduct({ product, suggestedProducts }) {
-	const suggestion = JSON.parse(suggestedProducts);
-
 	if (!product || null) {
 		return <h1>This product is un avillable</h1>;
 	}
@@ -141,7 +139,7 @@ export default function SingleProduct({ product, suggestedProducts }) {
 				<Container>
 					<Paper className={classes.paper}>
 						<Grid item xs={10}>
-							<SuggestedCarousel suggestedProducts={suggestion} />
+							<SuggestedCarousel suggestedProducts={suggestedProducts} />
 						</Grid>
 					</Paper>
 				</Container>
@@ -163,7 +161,7 @@ export async function getStaticProps(ctx) {
 	try {
 		const [ product, res ] = await Promise.all([ productPromise, resPromise ]);
 		product._id = product._id.toString();
-		const suggestedProducts = JSON.stringify(res);
+		const suggestedProducts = JSON.parse(JSON.stringify(res));
 
 		return { props: { product, suggestedProducts }, revalidate: 3 };
 	} catch (error) {
