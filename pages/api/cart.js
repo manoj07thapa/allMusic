@@ -44,11 +44,14 @@ const addProduct = Authenticated(async (req, res) => {
 
 const removeProduct = Authenticated(async (req, res) => {
 	const { productId } = req.body;
-
-	const cart = await Cart.findOneAndUpdate(
-		{ user: req.userId },
-		{ $pull: { products: { product: productId } } },
-		{ new: true }
-	).populate('products.product');
-	res.status(200).json({ success: true, cartProducts: cart.products });
+	try {
+		const cart = await Cart.findOneAndUpdate(
+			{ user: req.userId },
+			{ $pull: { products: { product: productId } } },
+			{ new: true }
+		).populate('products.product');
+		res.status(200).json({ success: true, cartProducts: cart.products });
+	} catch (error) {
+		res.status(401).json({ success: false, message: 'Unable to delete product' });
+	}
 });

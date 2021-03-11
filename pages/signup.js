@@ -89,7 +89,9 @@ export default function SignUp() {
 				alert('signup failed');
 			}
 			actions.setSubmitting(false);
-		} catch (err) {}
+		} catch (err) {
+			console.log(error);
+		}
 	};
 
 	return (

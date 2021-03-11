@@ -90,17 +90,19 @@ export default function CartPage({ error, products }) {
 	};
 
 	const handleCheckout = async (paymentInfo) => {
-		console.log(paymentInfo);
-		const res = await fetch('/api/payment', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: token
-			},
-			body: JSON.stringify({ paymentInfo })
-		});
-		const data = await res.json();
-		console.log(data);
+		try {
+			const res = await fetch('/api/payment', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: token
+				},
+				body: JSON.stringify({ paymentInfo })
+			});
+			const data = await res.json();
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	// const image = product.files.map((file) => file.url);

@@ -60,7 +60,6 @@ export default function ForgotPassword() {
 	const classes = useStyles();
 
 	const handleSubmit = async (values, actions) => {
-		console.log(actions);
 		try {
 			const res = await fetch('/api/user/users', {
 				method: 'POST',
@@ -71,7 +70,6 @@ export default function ForgotPassword() {
 				body: JSON.stringify(values)
 			});
 			const data = await res.json();
-			console.log(data);
 			if (data.success === true) {
 				alert(data.message);
 				actions.resetForm();
@@ -81,7 +79,9 @@ export default function ForgotPassword() {
 			}
 			actions.setSubmitting(false);
 			// actions.resetForm();
-		} catch (error) {}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (
@@ -146,7 +146,6 @@ export default function ForgotPassword() {
 export async function getServerSideProps(ctx) {
 	const cookie = parseCookies(ctx);
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
-	console.log(user);
 	if (user) {
 		return {
 			notFound: true

@@ -53,26 +53,27 @@ export default function CreateProduct() {
 	const router = useRouter();
 
 	const handleSubmit = async (values, actions) => {
-		console.log(values);
 		// const cloudinaryImage = await imageUpload();
-
-		const res = await fetch('/api/products', {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ values })
-		});
-		const data = await res.json();
-		if (data.success === false) {
-			actions.setErrors(data);
-		} else {
-			alert(data.message);
-			actions.resetForm();
+		try {
+			const res = await fetch('/api/products', {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ values })
+			});
+			const data = await res.json();
+			if (data.success === false) {
+				actions.setErrors(data);
+			} else {
+				alert(data.message);
+				actions.resetForm();
+			}
+			// router.push('/');
+		} catch (error) {
+			console.log(error);
 		}
-		console.log(data);
-		// router.push('/');
 	};
 	// this is a single file upload system for cloudinary
 	// const imageUpload = async () => {

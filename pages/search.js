@@ -12,20 +12,11 @@ export default function Search() {
 export const getServerSideProps = async (ctx) => {
 	await dbConnect();
 
-	// const search = getAsString(ctx.query.search);
-
-	/**Instead of running two different query synchronously this method
-	 * runs both query for makes and models parallely
-	 */
-	// const [ categories, makes, models, pagination ] = await Promise.all([
-	// 	getCategories(),
-	// 	getMakes(category),
-	// 	getModels(category, make),
-	// 	getPaginatedProducts(ctx.query)
-	// ]);
-
-	const searchProducts = await getPaginatedProducts(ctx.query);
-	console.log(searchProducts);
+	try {
+		const searchProducts = await getPaginatedProducts(ctx.query);
+	} catch (error) {
+		console.log(error);
+	}
 
 	return {
 		props: {}

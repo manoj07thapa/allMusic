@@ -285,7 +285,14 @@ export const getServerSideProps = async (ctx) => {
 
 	/**Instead of running two different query synchronously this method
 	 * runs both query for makes and models parallely
+	 * 
 	 */
+
+	// try {
+
+	// } catch (error) {
+
+	// }
 	const [ categories, makes, models, pagination ] = await Promise.all([
 		getCategories(),
 		getMakes(category),

@@ -67,7 +67,6 @@ const initialValues = {
 	email: '',
 	password: ''
 };
-console.log(initialValues);
 
 const validationSchema = Yup.object({
 	email: Yup.string().required('Email is required !!').email('Invalid email format !!'),
@@ -79,7 +78,6 @@ export default function Login() {
 	const classes = useStyles();
 
 	const handleSubmit = async (values, actions) => {
-		console.log(values);
 		try {
 			const res = await fetch('/api/user/login', {
 				method: 'POST',
@@ -104,7 +102,9 @@ export default function Login() {
 				actions.setErrors(data);
 			}
 			actions.setSubmitting(false);
-		} catch (error) {}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (

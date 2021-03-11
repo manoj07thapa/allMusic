@@ -35,7 +35,6 @@ export default function SingleProduct({ product, suggestedProducts }) {
 	const [ quantity, setQuantity ] = useState(1);
 
 	const router = useRouter();
-	console.log(router);
 
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
@@ -152,35 +151,45 @@ export default function SingleProduct({ product, suggestedProducts }) {
 }
 
 export async function getStaticProps(ctx) {
+	await dbConnect();
 	const id = ctx.params.id;
 	const category = ctx.params.category;
 	const make = ctx.params.make;
-	await dbConnect();
-	const product = await Product.findById(id).lean();
-	product._id = product._id.toString();
+
+	const productPromise = Product.findById(id).lean();
 
 	//querying for similar products suggestion in individual product page
-	const res = await Product.find({ category, make }).limit(10);
-	const suggestedProducts = JSON.stringify(res);
+	const resPromise = Product.find({ category, make }).limit(10);
+	try {
+		const [ product, res ] = await Promise.all([ productPromise, resPromise ]);
+		product._id = product._id.toString();
+		const suggestedProducts = JSON.stringify(res);
 
-	return { props: { product, suggestedProducts }, revalidate: 3 };
+		return { props: { product, suggestedProducts }, revalidate: 3 };
+	} catch (error) {
+		return { props: { err: 'No product' } };
+	}
 }
 
 export const getStaticPaths = async () => {
 	await dbConnect();
-	const products = await Product.find({}).limit(5);
+	try {
+		const products = await Product.find({}).limit(5);
 
-	return {
-		fallback: true, //fallback set to false means we dont need this at runtime
-		paths: products.map((p) => {
-			return {
-				params: {
-					id: p._id.toString(),
-					category: p.category.toString(),
-					make: p.make.toString(),
-					model: p.model.toString()
-				}
-			};
-		}) // params we get in ctx object in getStaticProps function, only ids sent via paths are statically served at buildtime
-	};
+		return {
+			fallback: true, //fallback set to false means we dont need this at runtime
+			paths: products.map((p) => {
+				return {
+					params: {
+						id: p._id.toString(),
+						category: p.category.toString(),
+						make: p.make.toString(),
+						model: p.model.toString()
+					}
+				};
+			}) // params we get in ctx object in getStaticProps function, only ids sent via paths are statically served at buildtime
+		};
+	} catch (error) {
+		console.log(error);
+	}
 };

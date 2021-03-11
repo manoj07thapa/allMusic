@@ -63,29 +63,32 @@ export default function ResetPassword() {
 	const classes = useStyles();
 
 	const router = useRouter();
-	console.log(router);
 
 	const handleSubmit = async (values, actions) => {
-		const res = await fetch('/api/user/resetPassword', {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ values, tokenId: router.query.id })
-		});
-		const data = await res.json();
-		if (data.success === true) {
-			alert(data.message);
-			actions.resetForm();
-			router.push('/login');
+		try {
+			const res = await fetch('/api/user/resetPassword', {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ values, tokenId: router.query.id })
+			});
+			const data = await res.json();
+			if (data.success === true) {
+				alert(data.message);
+				actions.resetForm();
+				router.push('/login');
+			}
+			if (data.success === false) {
+				actions.setErrors(data);
+				// router.push('/forgotPassword');
+			}
+			actions.setSubmitting(false);
+			// actions.resetForm();
+		} catch (error) {
+			console.log(error);
 		}
-		if (data.success === false) {
-			actions.setErrors(data);
-			// router.push('/forgotPassword');
-		}
-		actions.setSubmitting(false);
-		// actions.resetForm();
 	};
 
 	return (

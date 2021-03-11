@@ -62,7 +62,6 @@ export default function account() {
 		};
 		getOrders();
 	}, []);
-	console.log(orders);
 	const user = cookie.user ? JSON.parse(cookie.user) : null;
 	if (!user) {
 		return (

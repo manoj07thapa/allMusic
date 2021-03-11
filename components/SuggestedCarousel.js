@@ -16,5 +16,9 @@ export default function Carousel({ suggestedProducts }) {
 		speed: 12000,
 		autoplaySpeed: 12000
 	};
-	return <Slider {...settings}>{suggestedProducts.map((product) => <ProductCard product={product} />)}</Slider>;
+	return (
+		<Slider {...settings}>
+			{suggestedProducts.map((product, i) => <ProductCard product={product} key={i} />)}
+		</Slider>
+	);
 }
