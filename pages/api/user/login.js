@@ -21,11 +21,11 @@ export default async (req, res) => {
 				expiresIn: '7d'
 			});
 			const { firstname, role, email } = user;
-			res.status(201).json({ success: true, token, user: { firstname, role, email } });
+			return res.status(201).json({ success: true, token, user: { firstname, role, email } });
 		} else {
 			return res.status(401).json({ success: false, error: 'Email or password is Invalid' });
 		}
 	} catch (err) {
-		res.status(400).json({ success: false, error: 'server error' });
+		return res.status(400).json({ success: false, error: 'server error' });
 	}
 };

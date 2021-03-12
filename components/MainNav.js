@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 	anchorTag: {
 		textDecoration: 'none'
+	},
+	appBar: {
+		zIndex: theme.zIndex.drawer + 1,
+		marginTop: '3rem'
 	}
 }));
 
@@ -116,9 +120,9 @@ export default function ManinNav() {
 
 	return (
 		<div>
-			<AppBar position="static" color="secondary">
+			<AppBar position="fixed" color="secondary" className={classes.appBar}>
 				<Container>
-					<Toolbar variant="dense">
+					<Toolbar variant="dense" style={{ marginLeft: '10rem' }}>
 						<Grid container>
 							<Grid item xs={2}>
 								<Dropdown trigger={[ 'hover' ]} overlay={menuSmartphone} animation="slide-up">

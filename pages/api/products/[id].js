@@ -14,7 +14,7 @@ export default async (req, res) => {
 				}
 				res.status(200).json({ success: true, data: product });
 			} catch (error) {
-				res.status(400).json({ success: false, message: 'couldnot find the product' });
+				return res.status(400).json({ success: false, message: 'couldnot find the product' });
 			}
 			break;
 
@@ -24,9 +24,9 @@ export default async (req, res) => {
 				if (!product) {
 					return res.status(400).json({ success: false, message: 'couldnot find the product' });
 				}
-				res.status(200).json({ success: true, data: product });
+				return res.status(200).json({ success: true, data: product });
 			} catch (error) {
-				res.status(400).json({ success: false, message: 'couldnot find the product' });
+				return res.status(400).json({ success: false, message: 'couldnot find the product' });
 			}
 			break;
 
@@ -36,13 +36,13 @@ export default async (req, res) => {
 				if (!product) {
 					return res.status(400).json({ success: false, message: 'couldnot find the product' });
 				}
-				res.status(200).json({ success: true, data: {} });
+				return res.status(200).json({ success: true, data: {} });
 			} catch (error) {
-				res.status(400).json({ success: false, message: 'couldnot find the product' });
+				return res.status(400).json({ success: false, message: 'couldnot find the product' });
 			}
 			break;
 		default:
-			res.status(400).json({ success: false, message: 'couldnot find the product' });
+			return res.status(400).json({ success: false, message: 'couldnot find the product' });
 			break;
 	}
 };

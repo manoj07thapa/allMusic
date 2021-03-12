@@ -50,8 +50,8 @@ const removeProduct = Authenticated(async (req, res) => {
 			{ $pull: { products: { product: productId } } },
 			{ new: true }
 		).populate('products.product');
-		res.status(200).json({ success: true, cartProducts: cart.products });
+		return res.status(200).json({ success: true, cartProducts: cart.products });
 	} catch (error) {
-		res.status(401).json({ success: false, message: 'Unable to delete product' });
+		return res.status(401).json({ success: false, message: 'Unable to delete product' });
 	}
 });

@@ -1,20 +1,23 @@
-import React from 'react';
 import Link from 'next/link';
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import PersonIcon from '@material-ui/icons/Person';
+import { parseCookies } from 'nookies';
+import {
+	makeStyles,
+	Drawer,
+	Toolbar,
+	List,
+	Typography,
+	Divider,
+	ListItem,
+	ListItemIcon,
+	ListItemText
+} from '@material-ui/core';
+import GroupIcon from '@material-ui/icons/Group';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
+import { useRouter } from 'next/router';
+import CreateProduct from './CreateProduct';
 import UserRoles from './UserRoles';
+import UserAccount from './UserAccount';
 
 const drawerWidth = 240;
 
@@ -22,28 +25,33 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		display: 'flex'
 	},
-	appBar: {
-		zIndex: theme.zIndex.drawer + 1
-	},
 	drawer: {
 		width: drawerWidth,
-		flexShrink: 0,
-		marginTop: 500
+		flexShrink: 0
 	},
 	drawerPaper: {
 		width: drawerWidth
 	},
 	drawerContainer: {
-		overflow: 'auto'
+		overflow: 'auto',
+		marginTop: '3rem'
 	},
 	content: {
 		flexGrow: 1,
-		padding: theme.spacing(3)
+		padding: theme.spacing(3),
+		marginTop: '3rem'
 	}
 }));
 
-export default function ClippedDrawer() {
+export default function Sidebar() {
 	const classes = useStyles();
+
+	const { query } = useRouter();
+	console.log(query);
+
+	const cookie = parseCookies();
+	const user = cookie.user ? JSON.parse(cookie.user) : '';
+	console.log(user);
 
 	return (
 		<div className={classes.root}>
@@ -56,23 +64,63 @@ export default function ClippedDrawer() {
 			>
 				<Toolbar />
 				<div className={classes.drawerContainer}>
+					{user.role === ('root' || 'admin') && (
+						<div>
+							<List>
+								<Link
+									href={{
+										pathname: '/dashboard',
+										query: { query: 'add_product' }
+									}}
+								>
+									<ListItem button>
+										<ListItemIcon>
+											<AddCircleIcon />
+										</ListItemIcon>
+										<ListItemText primary="Create Product" />
+									</ListItem>
+								</Link>
+							</List>
+							<Divider />
+							<List>
+								<Link
+									href={{
+										pathname: '/dashboard',
+										query: { query: 'user_management' }
+									}}
+								>
+									<ListItem button>
+										<ListItemIcon>
+											<GroupIcon />
+										</ListItemIcon>
+										<ListItemText primary="User Management" />
+									</ListItem>
+								</Link>
+							</List>
+						</div>
+					)}
 					<List>
-						<Link href="/dashboard/userRoles">
+						<Link
+							href={{
+								pathname: '/dashboard',
+								query: { query: 'user_account' }
+							}}
+						>
 							<ListItem button>
 								<ListItemIcon>
-									<PersonIcon />
+									<AccountTreeIcon />
 								</ListItemIcon>
-								<ListItemText primary="User" />
+								<ListItemText primary="User Account" />
 							</ListItem>
 						</Link>
 					</List>
-					<Divider />
 				</div>
 			</Drawer>
 			<main className={classes.content}>
 				<Toolbar />
-
-				{/* <UserRoles /> */}
+				{query.query === 'add_product' && <CreateProduct />}
+				{query.query === 'user_management' && <UserRoles />}
+				{query.query === 'user_account' && <UserAccount />}
 			</main>
 		</div>
 	);

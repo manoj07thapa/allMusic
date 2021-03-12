@@ -20,8 +20,8 @@ export default async (req, res) => {
 		user.resetToken = undefined;
 		user.expireToken = undefined;
 		await user.save();
-		res.status(201).json({ success: true, message: 'Password successfully changed, you can now login' });
+		return res.status(201).json({ success: true, message: 'Password successfully changed, you can now login' });
 	} catch (err) {
-		res.status(400).json({ success: false, error: 'Server error, please try again' });
+		return res.status(400).json({ success: false, error: 'Server error, please try again' });
 	}
 };

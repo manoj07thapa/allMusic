@@ -8,22 +8,21 @@ export default async (req, res) => {
 	const make = getAsString(req.query.make);
 	const category = getAsString(req.query.category);
 
-	const models = await Product.aggregate([
-		// {
-		// 	$match: {
-		// 		$and: [ { make: makeQ }, { category: categoryQ } ]
-		// 	}
-		// },
-		{
-			$match: { make, category }
-		},
+	try {
+		const models = await Product.aggregate([
+			{
+				$match: { make, category }
+			},
 
-		{
-			$group: {
-				_id: '$model',
-				count: { $sum: 1 }
+			{
+				$group: {
+					_id: '$model',
+					count: { $sum: 1 }
+				}
 			}
-		}
-	]);
-	res.json(models);
+		]);
+		return res.status(200).json(models);
+	} catch (error) {
+		return res.status(401).json({ success: flase });
+	}
 };

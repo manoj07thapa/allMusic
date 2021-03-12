@@ -10,7 +10,7 @@ export async function getPaginatedProducts(query) {
 	const minPrice = getValueNumber(query.minPrice);
 	const maxPrice = getValueNumber(query.maxPrice);
 	const page = getValueNumber(query.page) || 1;
-	const productsPerPage = getValueNumber(query.productsPerPage) || 4; //products perpage
+	const productsPerPage = getValueNumber(query.productsPerPage) || 20; //products perpage
 	const skip = (page - 1) * productsPerPage;
 
 	let params = {};

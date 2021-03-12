@@ -1,23 +1,13 @@
 import { parseCookies } from 'nookies';
-import UserRoles from '../../components/UserRoles';
 import Sidebar from '../../components/Sidebar';
-
-// {
-// 	/* <div>
-// 			<h2>User's Detail</h2>
-// 			<hr />
-// 			<br />
-// 			<br />
-// 			{user.role === 'root' && <UserRoles />}
-// 		</div> */
-// }
 
 export default function DashBoard() {
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
 	return (
-		<div>
+		<div style={{ display: 'flex' }}>
 			<Sidebar />
+			<h1 style={{ marginLeft: '5rem', marginTop: '10rem' }}>Dashboard</h1>
 		</div>
 	);
 }

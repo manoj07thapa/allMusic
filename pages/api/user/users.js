@@ -25,9 +25,9 @@ const getUsers = Authenticated(async (req, res) => {
 
 	try {
 		const users = await User.find({ _id: { $ne: req.userId } }).select('-password');
-		res.status(200).json({ success: true, users });
+		return res.status(200).json({ success: true, users });
 	} catch (error) {
-		res.status(404).json({ success: false, data: {} });
+		return res.status(404).json({ success: false, data: {} });
 	}
 });
 
@@ -36,9 +36,9 @@ const changeRole = Authenticated(async (req, res) => {
 	try {
 		const newRole = currentRole === 'user' ? 'admin' : 'user';
 		const user = await User.findByIdAndUpdate({ _id }, { role: newRole }, { new: true });
-		res.status(200).json({ success: true, user });
+		return res.status(200).json({ success: true, user });
 	} catch (error) {
-		res.status(404).json({ success: false });
+		return res.status(404).json({ success: false });
 	}
 });
 
@@ -56,12 +56,12 @@ const forgotPassword = async (req, res) => {
 			user.expireToken = Date.now() + 3600000;
 			await user.save();
 			await sendResetPasswordEmail(user, token);
-			res.json({
+			return res.json({
 				success: true,
 				message: 'Please, check in your email and follow the instruction to reset your passowrd'
 			});
 		}
 	} catch (err) {
-		res.json({ success: false, error: ' Invalid Email !!' });
+		return res.json({ success: false, error: ' Invalid Email !!' });
 	}
 };

@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1
 	},
+	appBar: {
+		zIndex: theme.zIndex.drawer + 1
+	},
 	menuButton: {
 		marginRight: theme.spacing(2)
 	},
@@ -79,12 +82,12 @@ export default function Nav({ setTheme, isDarkTheme }) {
 
 	return (
 		<div className={classes.root}>
-			<AppBar position="static">
+			<AppBar position="fixed" className={classes.appBar}>
 				<Container>
-					<Toolbar>
+					<Toolbar variant="dense">
 						<Image src="/shoppify.jpg" layout="fixed" width={30} height={30} alt="shopping" />
 						<Typography variant="h6" className={classes.title}>
-							Mugicology
+							SHOPIFY
 						</Typography>
 						<Search />
 						<Link href="/cart">
@@ -98,16 +101,13 @@ export default function Nav({ setTheme, isDarkTheme }) {
 						{user ? (
 							<div>
 								<Link href="/login">
-									<Tooltip title="logout">
-										<IconButton
-											color="inherit"
-											component="a"
-											onClick={handleLogout}
-											aria-label="logout"
-										>
-											<PersonIcon />
-										</IconButton>
-									</Tooltip>
+									<a>
+										<Tooltip title="logout">
+											<IconButton color="inherit" onClick={handleLogout} aria-label="logout">
+												<PersonIcon />
+											</IconButton>
+										</Tooltip>
+									</a>
 								</Link>
 							</div>
 						) : (
@@ -127,18 +127,14 @@ export default function Nav({ setTheme, isDarkTheme }) {
 						)}
 						{user.role === 'admin' || user.role === 'root' ? (
 							<div>
-								<Link href="/createProduct">
-									<Button color="inherit" component="a">
-										Create
-									</Button>
-								</Link>
-
 								<Link href="/dashboard">
-									<Tooltip title="Dashboard">
-										<IconButton color="inherit" component="a" aria-label="Dashboard">
-											<DashboardIcon />
-										</IconButton>
-									</Tooltip>
+									<a>
+										<Tooltip title="Dashboard">
+											<IconButton color="inherit" aria-label="Dashboard">
+												<DashboardIcon />
+											</IconButton>
+										</Tooltip>
+									</a>
 								</Link>
 							</div>
 						) : null}

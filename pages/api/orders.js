@@ -12,7 +12,10 @@ export default async (req, res) => {
 };
 
 const getOrders = Authenticated(async (req, res) => {
-	const orders = await Order.find({ user: req.userId }).populate('products.product');
-	console.log(orders);
-	res.status(200).json({ message: 'success', orders });
+	try {
+		const orders = await Order.find({ user: req.userId }).populate('products.product');
+		return res.status(200).json({ message: 'success', orders });
+	} catch (error) {
+		return res.status(401).json({ message: 'failure', orders });
+	}
 });

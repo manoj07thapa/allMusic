@@ -60,7 +60,7 @@ export default async (req, res) => {
 			{ useFindAndModify: true }
 		);
 
-		res.status(200).json({ message: 'payment was successful' });
+		return res.status(200).json({ message: 'payment was successful' });
 	} catch (err) {
 		console.log(err);
 		return res.status(401).json({ error: 'error processing payment' });

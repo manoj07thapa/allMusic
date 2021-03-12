@@ -15,7 +15,9 @@ import {
 	Typography,
 	InputLabel,
 	Select,
-	Button
+	Button,
+	Drawer,
+	Toolbar
 } from '@material-ui/core';
 import { getAsString } from '../utils/getAsString';
 import { getCategories } from '../dbQuery/getCatogories';
@@ -27,10 +29,32 @@ import ProductCard from '../components/ProductCard';
 
 const prices = [ 5000, 10000, 20000, 50000, 100000, 200000, 500000 ];
 
+const drawerWidth = 240;
+
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		maxWidth: 250,
-		padding: theme.spacing(3)
+		padding: theme.spacing(3),
+		marginTop: '4.5rem'
+	},
+	root: {
+		display: 'flex'
+	},
+	drawer: {
+		width: drawerWidth,
+		flexShrink: 0
+	},
+	drawerPaper: {
+		width: drawerWidth
+	},
+	drawerContainer: {
+		overflow: 'auto',
+		marginTop: '3rem'
+	},
+	content: {
+		flexGrow: 1,
+		padding: theme.spacing(3),
+		marginTop: '3rem'
 	}
 }));
 
@@ -57,7 +81,6 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 	};
 
 	const handleSubmit = (values) => {
-		console.log('form values', values);
 		router.push(
 			{
 				pathname: '/products',
@@ -69,7 +92,7 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 	};
 
 	return (
-		<div>
+		<div className={classes.root}>
 			<Head>
 				<title>Shopify || Products</title>
 				<link rel="icon" href="/favicon.ico" />
@@ -80,109 +103,121 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 					<Formik initialValues={initialValues} onSubmit={handleSubmit}>
 						{({ values }) => (
 							<Form>
-								<Paper className={classes.paper}>
-									<Grid container spacing={3}>
-										<Grid item xs={12}>
-											<FormControl variant="outlined" fullWidth>
-												<InputLabel id="search-category">Choose Category</InputLabel>
-												<Field
-													name="category"
-													as={Select}
-													id="search-category"
-													label="Category"
-												>
-													<MenuItem value="all">
-														<em>All categories</em>
-													</MenuItem>
-													{categories.map((category, i) => (
-														<MenuItem value={category._id} key={i}>
-															{category._id}
+								<Drawer
+									className={classes.drawer}
+									variant="permanent"
+									classes={{
+										paper: classes.drawerPaper
+									}}
+								>
+									<Toolbar />
+									<Paper className={classes.paper}>
+										<Grid container spacing={3}>
+											<Grid item xs={12}>
+												<FormControl variant="outlined" fullWidth>
+													<InputLabel id="search-category">Choose Category</InputLabel>
+													<Field
+														name="category"
+														as={Select}
+														id="search-category"
+														label="Category"
+													>
+														<MenuItem value="all">
+															<em>All categories</em>
 														</MenuItem>
-													))}
-												</Field>
-											</FormControl>
-										</Grid>
-										<Grid item xs={12}>
-											<MakeSelect
-												initialCategory={initialValues.category}
-												name="make"
-												makes={makes}
-												category={values.category}
-											/>
-										</Grid>
-										<Grid item xs={12}>
-											<ModelSelect
-												initialMake={initialValues.make}
-												name="model"
-												models={models}
-												make={values.make}
-												category={values.category}
-											/>
-										</Grid>
-										<Grid item xs={12}>
-											<FormControl variant="outlined" fullWidth>
-												<InputLabel id="search-minPrice">Choose Min Price</InputLabel>
-												<Field
-													name="minPrice"
-													as={Select}
-													id="search-minPrice"
-													label="MinPrice"
-												>
-													<MenuItem value="all">
-														<em>No Min</em>
-													</MenuItem>
-													{prices.map((price, i) => (
-														<MenuItem value={price} key={i}>
-															{price}
+														{categories.map((category, i) => (
+															<MenuItem value={category._id} key={i}>
+																{category._id}
+															</MenuItem>
+														))}
+													</Field>
+												</FormControl>
+											</Grid>
+											<Grid item xs={12}>
+												<MakeSelect
+													initialCategory={initialValues.category}
+													name="make"
+													makes={makes}
+													category={values.category}
+												/>
+											</Grid>
+											<Grid item xs={12}>
+												<ModelSelect
+													initialMake={initialValues.make}
+													name="model"
+													models={models}
+													make={values.make}
+													category={values.category}
+												/>
+											</Grid>
+											<Grid item xs={12}>
+												<FormControl variant="outlined" fullWidth>
+													<InputLabel id="search-minPrice">Choose Min Price</InputLabel>
+													<Field
+														name="minPrice"
+														as={Select}
+														id="search-minPrice"
+														label="MinPrice"
+													>
+														<MenuItem value="all">
+															<em>No Min</em>
 														</MenuItem>
-													))}
-												</Field>
-											</FormControl>
-										</Grid>
-										<Grid item xs={12}>
-											<FormControl variant="outlined" fullWidth>
-												<InputLabel id="search-maxPrice"> Choose Max Price</InputLabel>
-												<Field
-													name="maxPrice"
-													as={Select}
-													id="search-maxPrice"
-													label="MaxPrice"
-												>
-													<MenuItem value="all">
-														<em>No max</em>
-													</MenuItem>
-													{prices.map((price, i) => (
-														<MenuItem value={price} key={i}>
-															{price}
+														{prices.map((price, i) => (
+															<MenuItem value={price} key={i}>
+																{price}
+															</MenuItem>
+														))}
+													</Field>
+												</FormControl>
+											</Grid>
+											<Grid item xs={12}>
+												<FormControl variant="outlined" fullWidth>
+													<InputLabel id="search-maxPrice"> Choose Max Price</InputLabel>
+													<Field
+														name="maxPrice"
+														as={Select}
+														id="search-maxPrice"
+														label="MaxPrice"
+													>
+														<MenuItem value="all">
+															<em>No max</em>
 														</MenuItem>
-													))}
-												</Field>
-											</FormControl>
+														{prices.map((price, i) => (
+															<MenuItem value={price} key={i}>
+																{price}
+															</MenuItem>
+														))}
+													</Field>
+												</FormControl>
+											</Grid>
+											<Grid item xs={12}>
+												<Button type="submit" variant="contained" fullWidth color="primary">
+													Search
+												</Button>
+											</Grid>
 										</Grid>
-										<Grid item xs={12}>
-											<Button type="submit" variant="contained" fullWidth color="primary">
-												Search
-											</Button>
-										</Grid>
-									</Grid>
-								</Paper>
+									</Paper>
+								</Drawer>
 							</Form>
 						)}
 					</Formik>
 				</Grid>
-				<Grid container item xs={12} sm={8} spacing={5}>
-					<Grid item xs={12}>
-						<ProductPagination totalPages={data ? data.totalPages : totalPages} />
-					</Grid>
-					{(data ? data.products : products || []).map((product) => (
-						<Grid item xs={12} sm={4} key={product._id}>
-							<ProductCard product={product} />
+				<main className={classes.content}>
+					<Toolbar />
+					<Grid container item xs={12} sm={10} spacing={5}>
+						<Grid item xs={12}>
+							<ProductPagination totalPages={data ? data.totalPages : totalPages} />
 						</Grid>
-					))}
-					<Grid item xs={12}>
-						<ProductPagination totalPages={data ? data.totalPages : totalPages} />
+						{(data ? data.products : products || []).map((product) => (
+							<Grid item xs={12} sm={4} key={product._id}>
+								<ProductCard product={product} />
+							</Grid>
+						))}
+						<Grid item xs={12}>
+							<ProductPagination totalPages={data ? data.totalPages : totalPages} />
+						</Grid>
 					</Grid>
-				</Grid>
+				</main>
 			</Grid>
 		</div>
 	);

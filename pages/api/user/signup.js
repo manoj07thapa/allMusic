@@ -29,8 +29,8 @@ export default async (req, res) => {
 		await sendConfirmationEmail(newUser);
 
 		await new Cart({ user: newUser._id }).save();
-		res.status(201).json({ success: true, data: newUser });
+		return res.status(201).json({ success: true, data: newUser });
 	} catch (error) {
-		res.json({ success: false, message: error.toString() });
+		return res.json({ success: false, message: error.toString() });
 	}
 };
