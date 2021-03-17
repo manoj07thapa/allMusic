@@ -12,8 +12,7 @@ import { darkTheme } from '../components/theme';
 import { SWRConfig } from 'swr';
 import axios from 'axios';
 import { AppProps } from 'next/app';
-import { useState } from 'react'
-
+import { useState } from 'react';
 
 // axios.defaults.baseURL = 'http://localhost:3000';
 NProgress.configure({ showSpinner: true });
@@ -23,12 +22,9 @@ Router.events.on('routeChangeStart', () => {
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
-
-
-export default function MyApp({ Component, pageProps }: AppProps) {
-	const [theme, setTheme] = useState(darkTheme);
+export default function MyApp({ Component, pageProps }) {
+	const [ theme, setTheme ] = useState(darkTheme);
 	const isDarkTheme = theme === darkTheme;
-
 
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
@@ -37,8 +33,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 			jssStyles.parentElement.removeChild(jssStyles);
 		}
 	}, []);
-
-
 
 	return (
 		<React.Fragment>
@@ -60,5 +54,4 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 			</ThemeProvider>
 		</React.Fragment>
 	);
-
 }
