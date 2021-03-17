@@ -7,7 +7,6 @@ export default function DashBoard() {
 	return (
 		<div style={{ display: 'flex' }}>
 			<Sidebar />
-			<h1 style={{ marginLeft: '5rem', marginTop: '10rem' }}>Dashboard</h1>
 		</div>
 	);
 }

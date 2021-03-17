@@ -1,11 +1,32 @@
-import { AppBar, Button, Toolbar, Typography, Container, Tooltip, IconButton, InputBase } from '@material-ui/core';
+import {
+	AppBar,
+	Button,
+	Toolbar,
+	Typography,
+	Container,
+	Tooltip,
+	IconButton,
+	Slide,
+	useScrollTrigger,
+	Menu,
+	MenuItem,
+	Badge
+} from '@material-ui/core';
 import Link from 'next/link';
+import React from 'react';
 import { makeStyles, fade } from '@material-ui/core/styles';
-import Image from 'next/image';
+import MenuDrawer from './MenuDrawer';
 import { parseCookies } from 'nookies';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import PersonIcon from '@material-ui/icons/Person';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import MenuIcon from '@material-ui/icons/Menu';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import HomeIcon from '@material-ui/icons/Home';
 import { useRouter } from 'next/router';
 import cookie1 from 'js-cookie';
 import Search from './Search';
@@ -14,8 +35,12 @@ import Brightness7Icon from '@material-ui/icons/Brightness7';
 import { darkTheme, lightTheme } from './theme';
 
 const useStyles = makeStyles((theme) => ({
-	root: {
+	grow: {
 		flexGrow: 1
+	},
+	anchorTag: {
+		textDecoration: 'none',
+		color: 'white'
 	},
 	appBar: {
 		zIndex: theme.zIndex.drawer + 1
@@ -24,49 +49,42 @@ const useStyles = makeStyles((theme) => ({
 		marginRight: theme.spacing(2)
 	},
 	title: {
-		flexGrow: 1,
-		marginLeft: '1rem'
-	},
-	search: {
-		position: 'relative',
-		borderRadius: theme.shape.borderRadius,
-		backgroundColor: fade(theme.palette.common.white, 0.15),
-		'&:hover': {
-			backgroundColor: fade(theme.palette.common.white, 0.25)
-		},
-		marginRight: theme.spacing(2),
-		marginLeft: 0,
-		width: '100%',
+		display: 'none',
+		textDecoration: 'none',
+		marginLeft: theme.spacing(2),
 		[theme.breakpoints.up('sm')]: {
-			marginLeft: theme.spacing(3),
-			width: 'auto'
+			display: 'block'
 		}
 	},
-	searchIcon: {
-		padding: theme.spacing(0, 2),
-		height: '100%',
-		position: 'absolute',
-		pointerEvents: 'none',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	inputRoot: {
-		color: 'inherit'
-	},
-	inputInput: {
-		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
-		paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-		transition: theme.transitions.create('width'),
-		width: '100%',
+	sectionDesktop: {
+		display: 'none',
 		[theme.breakpoints.up('md')]: {
-			width: '20ch'
+			display: 'flex'
+		}
+	},
+	sectionMobile: {
+		display: 'flex',
+		[theme.breakpoints.up('md')]: {
+			display: 'none'
 		}
 	}
 }));
 
-export default function Nav({ setTheme, isDarkTheme }) {
+function HideOnScroll(props) {
+	const { children, window } = props;
+	// Note that you normally won't need to set the window ref as useScrollTrigger
+	// will default to window.
+	// This is only being set here because the demo is in an iframe.
+	const trigger = useScrollTrigger({ target: window ? window() : undefined });
+
+	return (
+		<Slide appear={false} direction="down" in={!trigger}>
+			{children}
+		</Slide>
+	);
+}
+
+export default function Nav({ setTheme, isDarkTheme, props }) {
 	const classes = useStyles();
 
 	const cookie = parseCookies();
@@ -80,77 +98,280 @@ export default function Nav({ setTheme, isDarkTheme }) {
 		router.push('/login');
 	};
 
-	return (
-		<div className={classes.root}>
-			<AppBar position="fixed" className={classes.appBar}>
-				<Container>
-					<Toolbar variant="dense">
-						<Image src="/shoppify.jpg" layout="fixed" width={30} height={30} alt="shopping" />
-						<Typography variant="h6" className={classes.title}>
-							SHOPIFY
-						</Typography>
-						<Search />
-						<Link href="/cart">
-							<Tooltip title="Shopping cart">
-								<IconButton color="inherit" component="a" aria-label="Shopping cart">
-									<ShoppingBasketIcon />
-								</IconButton>
-							</Tooltip>
-						</Link>
+	//showmore icon section for mobile view
+	const [ anchorEl, setAnchorEl ] = React.useState(null);
+	const [ mobileMoreAnchorEl, setMobileMoreAnchorEl ] = React.useState(null);
 
-						{user ? (
-							<div>
-								<Link href="/login">
-									<a>
-										<Tooltip title="logout">
-											<IconButton color="inherit" onClick={handleLogout} aria-label="logout">
-												<PersonIcon />
-											</IconButton>
-										</Tooltip>
-									</a>
-								</Link>
-							</div>
-						) : (
-							<div>
-								<Link href="/signup">
-									<Button color="inherit" component="a">
-										Signup
-									</Button>
-								</Link>
+	const isMenuOpen = Boolean(anchorEl);
+	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-								<Link href="/login">
-									<Button color="inherit" component="a">
-										Login
-									</Button>
-								</Link>
-							</div>
-						)}
-						{user.role === 'admin' || user.role === 'root' ? (
-							<div>
-								<Link href="/dashboard">
-									<a>
-										<Tooltip title="Dashboard">
-											<IconButton color="inherit" aria-label="Dashboard">
-												<DashboardIcon />
-											</IconButton>
-										</Tooltip>
-									</a>
-								</Link>
-							</div>
-						) : null}
+	const handleProfileMenuOpen = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
 
-						<IconButton
-							aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
-							onClick={() => {
-								const newTheme = isDarkTheme ? lightTheme : darkTheme;
-								setTheme(newTheme);
-							}}
-						>
-							{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
+	const handleMobileMenuClose = () => {
+		setMobileMoreAnchorEl(null);
+	};
+
+	const handleMenuClose = () => {
+		setAnchorEl(null);
+		handleMobileMenuClose();
+	};
+
+	const handleMobileMenuOpen = (event) => {
+		setMobileMoreAnchorEl(event.currentTarget);
+	};
+
+	const menuId = 'primary-search-account-menu';
+	const renderMenu = (
+		<Menu
+			anchorEl={anchorEl}
+			anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+			id={menuId}
+			keepMounted
+			transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+			open={isMenuOpen}
+			onClose={handleMenuClose}
+		>
+			<MenuItem onClick={handleMenuClose}>
+				<Link
+					href={{
+						path: '/dashboard',
+						query: { query: 'index' }
+					}}
+				>
+					<a className={classes.anchorTag}>
+						<IconButton color="inherit" aria-label="Dashboard">
+							<DashboardIcon style={{ backgroundColor: 'black' }} />
 						</IconButton>
-					</Toolbar>
-				</Container>
-			</AppBar>
+					</a>
+				</Link>
+				<p>Dashboard</p>
+			</MenuItem>
+			<MenuItem onClick={handleMenuClose}>
+				<Link href="/login">
+					<a className={classes.anchorTag} onClick={handleLogout}>
+						<IconButton color="inherit" aria-label="Dashboard">
+							<ExitToAppIcon style={{ backgroundColor: 'black' }} />
+						</IconButton>
+					</a>
+				</Link>
+				<p>Logout</p>
+			</MenuItem>
+		</Menu>
+	);
+
+	const mobileMenuId = 'primary-search-account-menu-mobile';
+	const renderMobileMenu = (
+		<Menu
+			anchorEl={mobileMoreAnchorEl}
+			anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+			id={mobileMenuId}
+			keepMounted
+			transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+			open={isMobileMenuOpen}
+			onClose={handleMobileMenuClose}
+		>
+			<MenuItem onClick={handleMenuClose}>
+				<Link href="/cart">
+					<IconButton
+						aria-label="show new notifications"
+						color="inherit"
+						component="a"
+						aria-label="Shopping cart"
+					>
+						<Badge badgeContent={11} color="secondary">
+							<ShoppingBasketIcon />
+						</Badge>
+					</IconButton>
+				</Link>
+				<p>Cart</p>
+			</MenuItem>
+			<MenuItem onClick={handleMenuClose}>
+				<Link href="/">
+					<a className={classes.anchorTag}>
+						<IconButton color="inherit" aria-label="Dashboard">
+							<HomeIcon style={{ backgroundColor: 'black' }} />
+						</IconButton>
+					</a>
+				</Link>
+				<p>Home</p>
+			</MenuItem>
+			{!user && (
+				<MenuItem onClick={handleMenuClose}>
+					<Link href="/signup">
+						<IconButton aria-label="signup" color="inherit" component="a" aria-label="Sign up">
+							<LockOpenIcon />
+						</IconButton>
+					</Link>
+					<p>Signup</p>
+				</MenuItem>
+			)}
+
+			{!user && (
+				<MenuItem onClick={handleMenuClose}>
+					<Link href="/login">
+						<IconButton aria-label="login" color="inherit" component="a" aria-label="Login">
+							<VpnKeyIcon />
+						</IconButton>
+					</Link>
+					<p>Login</p>
+				</MenuItem>
+			)}
+
+			{user && (
+				<MenuItem onClick={handleProfileMenuOpen}>
+					<IconButton
+						aria-label="account of current user"
+						aria-controls="primary-search-account-menu"
+						aria-haspopup="true"
+						color="inherit"
+					>
+						<AccountCircle />
+					</IconButton>
+					<p>Profile</p>
+				</MenuItem>
+			)}
+			<MenuItem onClick={handleMenuClose}>
+				<IconButton
+					aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
+					onClick={() => {
+						const newTheme = isDarkTheme ? lightTheme : darkTheme;
+						setTheme(newTheme);
+					}}
+				>
+					{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
+				</IconButton>
+				<p>{isDarkTheme ? 'Light Mode' : ' Dark Mode'}</p>
+			</MenuItem>
+		</Menu>
+	);
+
+	//MenuIcon and drawer section
+	const [ open, setOpen ] = React.useState(false);
+
+	const handleDrawerOpen = () => {
+		setOpen(true);
+	};
+
+	const handleDrawerClose = () => {
+		setOpen(false);
+	};
+
+	return (
+		<div className={classes.grow}>
+			<HideOnScroll {...props}>
+				<AppBar className={classes.appBar} color="primary">
+					<Container>
+						<Toolbar>
+							<IconButton
+								edge="start"
+								className={classes.menuButton}
+								color="inherit"
+								aria-label="open drawer"
+								color="inherit"
+								onClick={!open ? handleDrawerOpen : handleDrawerClose}
+							>
+								<MenuIcon />
+							</IconButton>
+							<Button>
+								<Link href="/">
+									<a className={classes.title}>
+										<Typography variant="h6">SHOPIFY</Typography>
+									</a>
+								</Link>
+							</Button>
+							<div className={classes.grow} />
+
+							<Search />
+
+							<div className={classes.sectionDesktop}>
+								<Link href="/cart">
+									<Tooltip title="Shopping cart">
+										<IconButton color="inherit" component="a" aria-label="Shopping cart">
+											<ShoppingBasketIcon />
+										</IconButton>
+									</Tooltip>
+								</Link>
+								{user ? (
+									<div>
+										<Link
+											href={{
+												pathname: '/dashboard',
+												query: { query: 'index' }
+											}}
+										>
+											<a className={classes.anchorTag}>
+												<Tooltip title="Dashboard">
+													<IconButton color="inherit" aria-label="Dashboard">
+														<DashboardIcon />
+													</IconButton>
+												</Tooltip>
+											</a>
+										</Link>
+									</div>
+								) : null}
+								{user ? (
+									<div>
+										<Link href="/login">
+											<a className={classes.anchorTag}>
+												<Tooltip title="logout">
+													<IconButton
+														color="inherit"
+														onClick={handleLogout}
+														aria-label="logout"
+													>
+														<ExitToAppIcon />
+													</IconButton>
+												</Tooltip>
+											</a>
+										</Link>
+									</div>
+								) : (
+									<div>
+										<Link href="/signup">
+											<Button color="inherit" component="a" style={{ marginTop: '0.5rem' }}>
+												Signup
+											</Button>
+										</Link>
+
+										<Link href="/login">
+											<Button color="inherit" component="a" style={{ marginTop: '0.5rem' }}>
+												Login
+											</Button>
+										</Link>
+									</div>
+								)}
+
+								<IconButton
+									className={classes.anchorTag}
+									aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
+									onClick={() => {
+										const newTheme = isDarkTheme ? lightTheme : darkTheme;
+										setTheme(newTheme);
+									}}
+								>
+									{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
+								</IconButton>
+							</div>
+							<div className={classes.sectionMobile}>
+								<IconButton
+									aria-label="show more"
+									aria-controls={mobileMenuId}
+									aria-haspopup="true"
+									onClick={handleMobileMenuOpen}
+									color="inherit"
+								>
+									<MoreIcon />
+								</IconButton>
+							</div>
+						</Toolbar>
+					</Container>
+				</AppBar>
+			</HideOnScroll>
+			<MenuDrawer open={open} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} />
+			{renderMobileMenu}
+			{renderMenu}
 		</div>
 	);
 }

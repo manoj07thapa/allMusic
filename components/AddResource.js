@@ -1,16 +1,21 @@
-import React, { Fragment, useState } from 'react';
-import { parseCookies } from 'nookies';
-import { useRouter } from 'next/router';
-import Button from '@material-ui/core/Button';
-
-import { Typography, LinearProgress, FormControl, InputLabel, MenuItem, Select, Grid, Paper } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+	Button,
+	Typography,
+	LinearProgress,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	Grid,
+	Paper,
+	makeStyles
+} from '@material-ui/core';
 import fetch from 'isomorphic-unfetch';
 import { Formik, Form, Field } from 'formik';
 import { array, object, string, number } from 'yup';
 import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
-import { MultipleFileUploadField } from '../components/uploads/MultipleFileUploadField';
+import { MultipleFileUploadField } from './uploads/MultipleFileUploadField';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -19,25 +24,28 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paper: {
 		margin: 'auto',
-		maxWidth: 500,
 		padding: theme.spacing(3)
 	}
 }));
 
 const initialValues = {
 	category: '',
-	make: '',
-	model: '',
-	price: '',
+	title: '',
+	subtitle: '',
+	subtitle1: '',
+	subtitle2: '',
+	subtitle3: '',
 	files: [],
 	description: ''
 };
 
 const validationSchema = object({
 	category: string().required(),
-	make: string().required(),
-	model: string().required(),
-	price: number().required(),
+	title: string().required(),
+	subtitle: string().required(),
+	subtitle1: string().required(),
+	subtitle2: string().required(),
+	subtitle3: string().required(),
 	files: array(
 		object({
 			url: string().required()
@@ -46,15 +54,15 @@ const validationSchema = object({
 	description: string().required()
 });
 
-const categories = [ 'smartphone', 'laptop', 'tab', 'desktop' ];
+const categories = [ 'carousel', 'carousel1', 'carouse2', 'carousel3' ];
 
-export default function CreateProduct() {
+export default function AddResource() {
 	const classes = useStyles();
 
 	const handleSubmit = async (values, actions) => {
 		// const cloudinaryImage = await imageUpload();
 		try {
-			const res = await fetch('/api/products', {
+			const res = await fetch('/api/resource', {
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
@@ -74,21 +82,6 @@ export default function CreateProduct() {
 			console.log(error);
 		}
 	};
-	// this is a single file upload system for cloudinary
-	// const imageUpload = async () => {
-	// 	const formData = new FormData();
-	// 	formData.append('file', image);
-	// 	formData.append('upload_preset', 'mystore'); //my store is a store in cloudinary
-	// 	formData.append('cloud_name', 'karma-777'); //karma-777 is is my cloud name in cloudinary
-	// 	const res = await fetch('https://api.cloudinary.com/v1_1/karma-777/image/upload', {
-	// 		method: 'POST',
-	// 		body: formData
-	// 	});
-	// 	const data = await res.json();
-	// 	return data.url;
-	// };
-
-	// const Image = () => <div>{image ? <p>{image}</p> : null}</div>;
 
 	return (
 		<Formik
@@ -97,15 +90,15 @@ export default function CreateProduct() {
 			validationSchema={validationSchema}
 			validateOnBlur={false}
 		>
-			{({ values, errors, isSubmitting, isValid }) => (
+			{({ errors, isSubmitting, isValid }) => (
 				<div>
 					<Form>
 						<Paper className={classes.paper}>
 							<Typography component="h1" variant="h5">
-								Create Product
+								Create Utility
 							</Typography>
 							<Grid container>
-								<Grid item xs={12}>
+								<Grid item xs={12} sm={4}>
 									<FormControl variant="outlined" className={classes.formControl}>
 										<InputLabel id="category">Category</InputLabel>
 										<Field name="category" as={Select} id="category" label="Category">
@@ -117,44 +110,62 @@ export default function CreateProduct() {
 										</Field>
 									</FormControl>
 								</Grid>
-								<br />
-								<Grid item xs={12}>
+
+								<Grid item xs={12} sm={4}>
 									<FormikTextField
 										margin="normal"
-										label="Product make"
-										autoComplete="make"
+										label="Title"
+										autoComplete="title"
 										type="text"
-										formikKey="make"
+										formikKey="title"
 										variant="outlined"
 									/>
 								</Grid>
-								<br />
-								<Grid item xs={12}>
+
+								<Grid item xs={12} sm={4}>
 									<FormikTextField
 										margin="normal"
-										label="Product model"
-										autoComplete="model"
+										label="Subtitle"
+										autoComplete="subtitle"
 										type="text"
-										formikKey="model"
+										formikKey="subtitle"
 										variant="outlined"
 									/>
 								</Grid>
-								<br />
-								<Grid item xs={12}>
+								<Grid item xs={12} sm={4}>
 									<FormikTextField
 										margin="normal"
-										label="Price"
-										autoComplete="price"
-										type="number"
-										formikKey="price"
+										label="Subtitle1"
+										autoComplete="subtitle1"
+										type="text"
+										formikKey="subtitle1"
 										variant="outlined"
 									/>
 								</Grid>
-								<br />
-								<Grid item xs={12}>
+								<Grid item xs={12} sm={4}>
+									<FormikTextField
+										margin="normal"
+										label="Subtitle2"
+										autoComplete="subtitle2"
+										type="text"
+										formikKey="subtitle2"
+										variant="outlined"
+									/>
+								</Grid>
+								<Grid item xs={12} sm={4}>
+									<FormikTextField
+										margin="normal"
+										label="Subtitle3"
+										autoComplete="subtitle3"
+										type="text"
+										formikKey="subtitle3"
+										variant="outlined"
+									/>
+								</Grid>
+								<Grid item xs={12} sm={3}>
 									<MultipleFileUploadField name="files" />
 								</Grid>
-								<Grid item xs={12}>
+								<Grid item xs={12} sm={4}>
 									<FormikTextField
 										margin="normal"
 										label="Description"
@@ -162,26 +173,12 @@ export default function CreateProduct() {
 										type="text"
 										formikKey="description"
 										variant="outlined"
+										multiline
+										rows={4}
 									/>
 								</Grid>
 
-								<br />
-								<br />
-								{/* <Grid item xs={12}>
-									<Button variant="contained" component="label" disabled={!isValid || isSubmitting}>
-										Upload Image
-										<input
-											type="file"
-											hidden
-											accept="image/*"
-											onChange={(e) => setImage(e.target.files[0])}
-										/>
-									</Button>
-								</Grid> */}
-
-								<br />
-								<br />
-								<Grid item xs={12}>
+								<Grid item xs={12} sm={4}>
 									<Button
 										type="submit"
 										variant="contained"
@@ -191,8 +188,6 @@ export default function CreateProduct() {
 										Create
 									</Button>
 								</Grid>
-								<br />
-								<br />
 
 								{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
 

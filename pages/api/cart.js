@@ -16,12 +16,9 @@ export default async (req, res) => {
 
 const addProduct = Authenticated(async (req, res) => {
 	const { quantity, productId } = req.body;
-	console.log('Product in cart', quantity, productId);
-	console.log('User Cart', req.userId);
 
 	try {
 		const cart = await Cart.findOne({ user: req.userId });
-		console.log('Cart ', cart);
 		/**checking if the product id from client exist in product array of cart colection */
 		const productExists = cart.products.some((pdoc) => productId === pdoc.product.toString());
 
@@ -37,7 +34,6 @@ const addProduct = Authenticated(async (req, res) => {
 
 		res.status(200).json({ success: true, message: 'product added to cart' });
 	} catch (error) {
-		console.log(error);
 		res.status(400).json({ success: false, message: 'Couldnot add product to cart' });
 	}
 });

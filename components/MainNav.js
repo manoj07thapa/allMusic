@@ -1,4 +1,14 @@
-import { makeStyles, AppBar, Button, Toolbar, Typography, Container, Grid } from '@material-ui/core';
+import {
+	makeStyles,
+	AppBar,
+	Button,
+	Toolbar,
+	Typography,
+	Container,
+	Grid,
+	Slide,
+	useScrollTrigger
+} from '@material-ui/core';
 import Link from 'next/link';
 import Dropdown from 'rc-dropdown';
 import 'rc-dropdown/assets/index.css';
@@ -12,14 +22,18 @@ const useStyles = makeStyles((theme) => ({
 		flexGrow: 1,
 		width: '100%',
 		maxWidth: 360,
-		backgroundColor: theme.palette.background.paper
+		backgroundColor: theme.palette.background.paper,
+		[theme.breakpoints.down('md')]: {
+			display: 'none'
+		}
 	},
 	anchorTag: {
 		textDecoration: 'none'
 	},
 	appBar: {
 		zIndex: theme.zIndex.drawer + 1,
-		marginTop: '3rem'
+		marginTop: '3rem',
+		backgroundColor: '#495057'
 	}
 }));
 
@@ -28,7 +42,21 @@ const laptopMakes = [ 'Dell', 'Acer', 'Hp', 'Lenovo', 'Apple' ];
 const tabletMakes = [ 'Apple', 'OnePlus', 'Lenevo', 'Samsung' ];
 const desktopMakes = [ 'Apple', 'Dell', 'Lenevo', 'Acer' ];
 
-export default function ManinNav() {
+function HideOnScroll(props) {
+	const { children, window } = props;
+	// Note that you normally won't need to set the window ref as useScrollTrigger
+	// will default to window.
+	// This is only being set here because the demo is in an iframe.
+	const trigger = useScrollTrigger({ target: window ? window() : undefined });
+
+	return (
+		<Slide appear={false} direction="down" in={!trigger}>
+			{children}
+		</Slide>
+	);
+}
+
+export default function ManinNav(props) {
 	const classes = useStyles();
 	const menuSmartphone = (
 		<div className={classes.root}>
@@ -119,35 +147,37 @@ export default function ManinNav() {
 	);
 
 	return (
-		<div>
-			<AppBar position="fixed" color="secondary" className={classes.appBar}>
-				<Container>
-					<Toolbar variant="dense" style={{ marginLeft: '10rem' }}>
+		<div className={classes.root}>
+			<HideOnScroll {...props}>
+				<AppBar className={classes.appBar}>
+					<Toolbar variant="dense">
 						<Grid container>
-							<Grid item xs={2}>
+							<Grid item xs={3}>
 								<Dropdown trigger={[ 'hover' ]} overlay={menuSmartphone} animation="slide-up">
-									<Button component="a">SmartPhone</Button>
+									<Button component="a" color="button">
+										SmartPhone
+									</Button>
 								</Dropdown>
 							</Grid>
-							<Grid item xs={2}>
+							<Grid item xs={3}>
 								<Dropdown trigger={[ 'hover' ]} overlay={menuLaptop} animation="slide-up">
 									<Button>Laptop</Button>
 								</Dropdown>
 							</Grid>
-							<Grid item xs={2}>
+							<Grid item xs={3}>
 								<Dropdown trigger={[ 'hover' ]} overlay={menuTablet} animation="slide-up">
 									<Button>Tablet</Button>
 								</Dropdown>
 							</Grid>
-							<Grid item xs={2}>
+							<Grid item xs={3}>
 								<Dropdown trigger={[ 'hover' ]} overlay={menuDesktop} animation="slide-up">
 									<Button>Desktop</Button>
 								</Dropdown>
 							</Grid>
 						</Grid>
 					</Toolbar>
-				</Container>
-			</AppBar>
+				</AppBar>
+			</HideOnScroll>
 		</div>
 	);
 }

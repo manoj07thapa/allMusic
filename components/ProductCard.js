@@ -31,7 +31,7 @@ export default function ProductCard({ product }) {
 					<CardHeader
 						avatar={
 							<Avatar aria-label="recipe" className={classes.avatar}>
-								R
+								{product.make}
 							</Avatar>
 						}
 						action={
@@ -43,11 +43,6 @@ export default function ProductCard({ product }) {
 						subheader={`Rs. ${product.price}`}
 					/>
 					<CardMedia className={classes.media} image={image[0]} title={product.make + '' + product.model} />
-					{/* <CardContent>
-						<Typography variant="body2" color="textSecondary" component="p">
-							{product.description}
-						</Typography>
-					</CardContent> */}
 				</Card>
 			</a>
 		</Link>

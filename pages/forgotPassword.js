@@ -91,7 +91,7 @@ export default function ForgotPassword() {
 			validationSchema={validationSchema}
 			validateOnBlur={false}
 		>
-			{({ errors, isSubmitting }) => (
+			{({ errors, isSubmitting, isValid }) => (
 				<Grid container component="main" className={classes.root}>
 					<Grid item xs={12} sm={8} md={5} component={Paper}>
 						<div className={classes.paper}>
@@ -119,8 +119,9 @@ export default function ForgotPassword() {
 									type="submit"
 									fullWidth
 									variant="contained"
-									color="primary"
+									color="secondary"
 									className={classes.submit}
+									disabled={!isValid || isSubmitting}
 								>
 									Send
 								</Button>
@@ -133,9 +134,6 @@ export default function ForgotPassword() {
 								{isSubmitting && <LinearProgress />}
 							</Form>
 						</div>
-						<Link href="/resetPassword">
-							<a>Reset Password</a>
-						</Link>
 					</Grid>
 				</Grid>
 			)}

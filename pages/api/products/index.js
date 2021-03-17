@@ -17,7 +17,6 @@ export default async (req, res) => {
 			break;
 		case 'POST':
 			const { category, make, model, price, files, description } = req.body.values;
-			console.log(req.body.values);
 			try {
 				if (!category || !make || !model || !price || !description || !files) {
 					return res.status(404).json({ success: false, error: 'Add all the required fields' });

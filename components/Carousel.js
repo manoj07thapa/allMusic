@@ -4,6 +4,9 @@ import 'slick-carousel/slick/slick-theme.css';
 
 export default function Carousel({ product }) {
 	const settings = {
+		// customPaging: function(i) {
+		// 	return <a>{product.files.map((file, i) => <img key={i} src={file.url} alt="" />)}</a>;
+		// },
 		dots: true,
 		infinite: true,
 		speed: 500,

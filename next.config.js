@@ -1,7 +1,7 @@
-// module.exports = {
-// 	images: {
-// 		domains: [ 'images.unsplash.com' ],
-// 		loader: 'cloudinary',
-// 		path: 'res.cloudinary.com'
-// 	}
-// };
+module.exports = {
+	images: {
+		domains: [ 'res.cloudinary.com' ]
+		// loader: 'cloudinary',
+		// path: 'https://res.cloudinary.com/karma-777/'
+	}
+};

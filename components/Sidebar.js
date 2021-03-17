@@ -9,15 +9,22 @@ import {
 	Divider,
 	ListItem,
 	ListItemIcon,
-	ListItemText
+	ListItemText,
+	Accordion,
+	AccordionSummary,
+	AccordionDetails
 } from '@material-ui/core';
 import GroupIcon from '@material-ui/icons/Group';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
+import AppsIcon from '@material-ui/icons/Apps';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import { useRouter } from 'next/router';
 import CreateProduct from './CreateProduct';
 import UserRoles from './UserRoles';
 import UserAccount from './UserAccount';
+import AddResource from './AddResource';
 
 const drawerWidth = 240;
 
@@ -64,23 +71,67 @@ export default function Sidebar() {
 			>
 				<Toolbar />
 				<div className={classes.drawerContainer}>
+					<List>
+						<Link
+							href={{
+								pathname: '/dashboard',
+								query: { query: 'index' }
+							}}
+						>
+							<ListItem button>
+								<ListItemIcon>
+									<AppsIcon />
+								</ListItemIcon>
+								<ListItemText primary="Home" />
+							</ListItem>
+						</Link>
+					</List>
 					{user.role === ('root' || 'admin') && (
 						<div>
 							<List>
-								<Link
-									href={{
-										pathname: '/dashboard',
-										query: { query: 'add_product' }
-									}}
-								>
-									<ListItem button>
-										<ListItemIcon>
-											<AddCircleIcon />
-										</ListItemIcon>
-										<ListItemText primary="Create Product" />
-									</ListItem>
-								</Link>
+								<ListItem button>
+									<Accordion>
+										<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+											<ListItemIcon>
+												<CreateNewFolderIcon />
+											</ListItemIcon>
+											<ListItemText primary="Create " />
+										</AccordionSummary>
+										<AccordionDetails>
+											<List>
+												<Link
+													href={{
+														pathname: '/dashboard',
+														query: { query: 'add_product' }
+													}}
+												>
+													<ListItem button>
+														<ListItemIcon>
+															<AddCircleIcon />
+														</ListItemIcon>
+														<ListItemText primary="Create Product" />
+													</ListItem>
+												</Link>
+												<Divider />
+												<Link
+													href={{
+														pathname: '/dashboard',
+														query: { query: 'add_utility' }
+													}}
+												>
+													<ListItem button>
+														<ListItemIcon>
+															<AddCircleIcon />
+														</ListItemIcon>
+														<ListItemText primary="Create Resource" />
+													</ListItem>
+												</Link>
+											</List>
+										</AccordionDetails>
+									</Accordion>
+								</ListItem>
 							</List>
+
 							<Divider />
 							<List>
 								<Link
@@ -118,9 +169,11 @@ export default function Sidebar() {
 			</Drawer>
 			<main className={classes.content}>
 				<Toolbar />
+				{query.query === 'index' && <div>Dashboard Home</div>}
 				{query.query === 'add_product' && <CreateProduct />}
 				{query.query === 'user_management' && <UserRoles />}
 				{query.query === 'user_account' && <UserAccount />}
+				{query.query === 'add_utility' && <AddResource />}
 			</main>
 		</div>
 	);

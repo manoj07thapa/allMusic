@@ -98,7 +98,7 @@ export default function ResetPassword() {
 			validationSchema={validationSchema}
 			validateOnBlur={false}
 		>
-			{({ errors, isSubmitting }) => (
+			{({ errors, isSubmitting, isValid }) => (
 				<Grid container component="main" className={classes.root}>
 					<Grid item xs={12} sm={8} md={5} component={Paper}>
 						<div className={classes.paper}>
@@ -136,9 +136,9 @@ export default function ResetPassword() {
 									type="submit"
 									fullWidth
 									variant="contained"
-									color="primary"
+									color="secondary"
 									className={classes.submit}
-									disabled={isSubmitting}
+									disabled={!isValid || isSubmitting}
 								>
 									Reset Password
 								</Button>

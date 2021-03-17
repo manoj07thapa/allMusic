@@ -29,13 +29,13 @@ import ProductCard from '../components/ProductCard';
 
 const prices = [ 5000, 10000, 20000, 50000, 100000, 200000, 500000 ];
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		maxWidth: 250,
-		padding: theme.spacing(3),
-		marginTop: '4.5rem'
+		padding: theme.spacing(2),
+		marginTop: '3rem'
 	},
 	root: {
 		display: 'flex'
@@ -48,13 +48,12 @@ const useStyles = makeStyles((theme) => ({
 		width: drawerWidth
 	},
 	drawerContainer: {
-		overflow: 'auto',
-		marginTop: '3rem'
+		overflow: 'auto'
 	},
 	content: {
 		flexGrow: 1,
 		padding: theme.spacing(3),
-		marginTop: '3rem'
+		marginLeft: theme.spacing(9)
 	}
 }));
 
@@ -97,7 +96,6 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 				<title>Shopify || Products</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Typography variant="h2">Product page</Typography>
 			<Grid container>
 				<Grid item xs={12} sm={3}>
 					<Formik initialValues={initialValues} onSubmit={handleSubmit}>
@@ -111,11 +109,18 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 									}}
 								>
 									<Toolbar />
-									<Paper className={classes.paper}>
+
+									<div className={classes.paper}>
 										<Grid container spacing={3}>
+											<Grid item>
+												<Typography variant="body1" color="tertiary">
+													Search Using Filters
+												</Typography>
+												<hr />
+											</Grid>
 											<Grid item xs={12}>
 												<FormControl variant="outlined" fullWidth>
-													<InputLabel id="search-category">Choose Category</InputLabel>
+													<InputLabel id="search-category">Category</InputLabel>
 													<Field
 														name="category"
 														as={Select}
@@ -152,7 +157,7 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 											</Grid>
 											<Grid item xs={12}>
 												<FormControl variant="outlined" fullWidth>
-													<InputLabel id="search-minPrice">Choose Min Price</InputLabel>
+													<InputLabel id="search-minPrice"> Min Price</InputLabel>
 													<Field
 														name="minPrice"
 														as={Select}
@@ -172,7 +177,7 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 											</Grid>
 											<Grid item xs={12}>
 												<FormControl variant="outlined" fullWidth>
-													<InputLabel id="search-maxPrice"> Choose Max Price</InputLabel>
+													<InputLabel id="search-maxPrice"> Max Price</InputLabel>
 													<Field
 														name="maxPrice"
 														as={Select}
@@ -196,28 +201,29 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 												</Button>
 											</Grid>
 										</Grid>
-									</Paper>
+									</div>
 								</Drawer>
 							</Form>
 						)}
 					</Formik>
 				</Grid>
-				<main className={classes.content}>
-					<Toolbar />
-					<Grid container item xs={12} sm={10} spacing={5}>
-						<Grid item xs={12}>
-							<ProductPagination totalPages={data ? data.totalPages : totalPages} />
-						</Grid>
-						{(data ? data.products : products || []).map((product) => (
-							<Grid item xs={12} sm={4} key={product._id}>
-								<ProductCard product={product} />
-							</Grid>
-						))}
-						<Grid item xs={12}>
-							<ProductPagination totalPages={data ? data.totalPages : totalPages} />
-						</Grid>
+				<Grid container item xs={12} sm={9} spacing={3}>
+					<Grid item xs={12}>
+						{query.category === 'all' ? (
+							<Typography variant="h6">{`Search results for all Products`}</Typography>
+						) : (
+							<Typography variant="h6">{`Search results for ${query.make}'s  ${query.category}s`}</Typography>
+						)}
 					</Grid>
-				</main>
+					{(data ? data.products : products || []).map((product) => (
+						<Grid item xs={12} sm={4} key={product._id}>
+							<ProductCard product={product} />
+						</Grid>
+					))}
+					<Grid item xs={12}>
+						<ProductPagination totalPages={data ? data.totalPages : totalPages} />
+					</Grid>
+				</Grid>
 			</Grid>
 		</div>
 	);
@@ -259,7 +265,7 @@ export function MakeSelect({ initialCategory, makes, category, ...props }) {
 	// const newMakes = data || makes;
 	return (
 		<FormControl variant="outlined" fullWidth>
-			<InputLabel id="search-make">Choose Make</InputLabel>
+			<InputLabel id="search-make"> Make</InputLabel>
 			<Select name="make" id="search-make" label="Make" {...field} {...props}>
 				<MenuItem value="all">
 					<em>All Makes</em>
@@ -297,7 +303,7 @@ export function ModelSelect({ initialMake, models, category, make, ...props }) {
 
 	return (
 		<FormControl variant="outlined" fullWidth>
-			<InputLabel id="search-model">Choose Model</InputLabel>
+			<InputLabel id="search-model">Model</InputLabel>
 			<Select name="model" id="search-model" label="Model" {...field} {...props}>
 				<MenuItem value="all">
 					<em>All Models</em>
@@ -323,21 +329,22 @@ export const getServerSideProps = async (ctx) => {
 	 * 
 	 */
 
-	// try {
+	try {
+		const [ categories, makes, models, pagination ] = await Promise.all([
+			getCategories(),
+			getMakes(category),
+			getModels(category, make),
+			getPaginatedProducts(ctx.query)
+		]);
 
-	// } catch (error) {
+		const ssProducts = JSON.stringify(pagination.products);
 
-	// }
-	const [ categories, makes, models, pagination ] = await Promise.all([
-		getCategories(),
-		getMakes(category),
-		getModels(category, make),
-		getPaginatedProducts(ctx.query)
-	]);
-
-	const ssProducts = JSON.stringify(pagination.products);
-
-	return {
-		props: { categories, makes, models, ssProducts, totalPages: pagination.totalPages }
-	};
+		return {
+			props: { categories, makes, models, ssProducts, totalPages: pagination.totalPages }
+		};
+	} catch (error) {
+		return {
+			props: { error: 'Error fetching products' }
+		};
+	}
 };

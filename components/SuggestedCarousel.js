@@ -5,7 +5,6 @@ import { Grid } from '@material-ui/core';
 import ProductCard from './ProductCard';
 
 export default function Carousel({ suggestedProducts }) {
-	console.log(suggestedProducts);
 	const settings = {
 		dots: true,
 		infinite: true,

@@ -90,7 +90,7 @@ export default function SignUp() {
 			}
 			actions.setSubmitting(false);
 		} catch (err) {
-			console.log(error);
+			console.log(err);
 		}
 	};
 
@@ -104,7 +104,7 @@ export default function SignUp() {
 					Sign up
 				</Typography>
 				<Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
-					{({ errors, isSubmitting }) => (
+					{({ errors, isSubmitting, isValid }) => (
 						<Form className={classes.form}>
 							<Grid container spacing={2}>
 								<Grid item xs={12} sm={6}>
@@ -178,9 +178,10 @@ export default function SignUp() {
 								type="submit"
 								fullWidth
 								variant="contained"
-								color="primary"
+								color="secondary"
 								className={classes.submit}
 								onClick={handleSubmit}
+								disabled={!isValid || isSubmitting}
 							>
 								Sign Up
 							</Button>
