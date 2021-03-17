@@ -8,6 +8,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Link from 'next/link';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { red } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
 	media: {
@@ -16,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	anchorTag: {
 		textDecoration: 'none'
+	},
+	avatar: {
+		backgroundColor: red[500]
 	}
 }));
 
@@ -23,6 +28,7 @@ export default function ProductCard({ product }) {
 	const classes = useStyles();
 
 	const image = product.files.map((file) => file.url);
+	const avatar = product.make.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
 
 	return (
 		<Link href={`/${product.category}/${product.make}/${product.model}/${product._id}`}>
@@ -30,19 +36,32 @@ export default function ProductCard({ product }) {
 				<Card className={classes.root}>
 					<CardHeader
 						avatar={
-							<Avatar aria-label="recipe" className={classes.avatar}>
-								{product.make}
-							</Avatar>
+							!product ? (
+								<Skeleton animation="wave" variant="circle" width={40} height={40} />
+							) : (
+								<Avatar aria-label="recipe">{avatar}</Avatar>
+							)
 						}
-						action={
-							<IconButton aria-label="settings">
-								<MoreVertIcon />
-							</IconButton>
+						title={
+							!product ? (
+								<Skeleton animation="wave" height={10} width="80%" style={{ marginBottom: 6 }} />
+							) : (
+								product.make + '' + product.model
+							)
 						}
-						title={product.make + '' + product.model}
-						subheader={`Rs. ${product.price}`}
+						subheader={
+							!product ? <Skeleton animation="wave" height={10} width="40%" /> : `Rs. ${product.price}`
+						}
 					/>
-					<CardMedia className={classes.media} image={image[0]} title={product.make + '' + product.model} />
+					{!product ? (
+						<Skeleton animation="wave" variant="rect" className={classes.media} />
+					) : (
+						<CardMedia
+							className={classes.media}
+							image={image[0]}
+							title={product.make + '' + product.model}
+						/>
+					)}
 				</Card>
 			</a>
 		</Link>

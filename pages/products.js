@@ -6,6 +6,8 @@ import { stringify } from 'querystring';
 import dbConnect from '../utils/dbConnect';
 import { Formik, Form, Field, useField, useFormikContext } from 'formik';
 import { useRouter } from 'next/router';
+import Filters from '../components/Filters';
+
 import {
 	Paper,
 	Grid,
@@ -17,7 +19,8 @@ import {
 	Select,
 	Button,
 	Drawer,
-	Toolbar
+	Toolbar,
+	Container
 } from '@material-ui/core';
 import { getAsString } from '../utils/getAsString';
 import { getCategories } from '../dbQuery/getCatogories';
@@ -29,16 +32,13 @@ import ProductCard from '../components/ProductCard';
 
 const prices = [ 5000, 10000, 20000, 50000, 100000, 200000, 500000 ];
 
-const drawerWidth = 200;
+const drawerWidth = 270;
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
-		maxWidth: 250,
+		maxWidth: 270,
 		padding: theme.spacing(2),
-		marginTop: '3rem'
-	},
-	root: {
-		display: 'flex'
+		marginTop: '1rem'
 	},
 	drawer: {
 		width: drawerWidth,
@@ -50,10 +50,27 @@ const useStyles = makeStyles((theme) => ({
 	drawerContainer: {
 		overflow: 'auto'
 	},
-	content: {
-		flexGrow: 1,
-		padding: theme.spacing(3),
-		marginLeft: theme.spacing(9)
+	drawerDisplay: {
+		display: 'block',
+		[theme.breakpoints.down('sm')]: {
+			display: 'none'
+		}
+	},
+	marginMobile: {
+		[theme.breakpoints.down('sm')]: {
+			marginTop: '5rem',
+			marginLeft: '6rem'
+		},
+		[theme.breakpoints.down('xs')]: {
+			marginTop: '5rem',
+			marginLeft: '4rem'
+		}
+	},
+	productGrid: {
+		marginTop: '2rem',
+		[theme.breakpoints.down('sm')]: {
+			marginTop: '0.2rem'
+		}
 	}
 }));
 
@@ -71,38 +88,45 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 		initialData: deepEqual(query, serverQuery) ? { products, totalPages } : undefined
 	});
 
-	const initialValues = {
-		category: getAsString(query.category) || 'all',
-		make: getAsString(query.make) || 'all',
-		model: getAsString(query.model) || 'all',
-		minPrice: getAsString(query.minPrice) || 'all',
-		maxPrice: getAsString(query.maxPrice) || 'all'
-	};
+	// const initialValues = {
+	// 	category: getAsString(query.category) || 'all',
+	// 	make: getAsString(query.make) || 'all',
+	// 	model: getAsString(query.model) || 'all',
+	// 	minPrice: getAsString(query.minPrice) || 'all',
+	// 	maxPrice: getAsString(query.maxPrice) || 'all'
+	// };
 
-	const handleSubmit = (values) => {
-		router.push(
-			{
-				pathname: '/products',
-				query: { ...values, page: 1 }
-			},
-			undefined,
-			{ shallow: true }
-		);
-	};
+	// const handleSubmit = (values) => {
+	// 	router.push(
+	// 		{
+	// 			pathname: '/products',
+	// 			query: { ...values, page: 1 }
+	// 		},
+	// 		undefined,
+	// 		{ shallow: true }
+	// 	);
+	// };
 
 	return (
-		<div className={classes.root}>
+		<div>
 			<Head>
 				<title>Shopify || Products</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Grid container>
-				<Grid item xs={12} sm={3}>
-					<Formik initialValues={initialValues} onSubmit={handleSubmit}>
+
+			<Grid container className={classes.marginMobile}>
+				<Filters categories={categories} makes={makes} models={models} />
+				{/* <Button style={{ marginTop: '5rem' }}>Filters</Button> */}
+				{/* <Grid item>
+					<Fab color="primary" aria-label="add">
+						<AddIcon />
+					</Fab>
+				</Grid> */}
+				{/* <Grid container item xs={3} spacing={3} className={classes.drawerDisplay}> */}
+				{/* <Formik initialValues={initialValues} onSubmit={handleSubmit}>
 						{({ values }) => (
 							<Form>
 								<Drawer
-									className={classes.drawer}
 									variant="permanent"
 									classes={{
 										paper: classes.drawerPaper
@@ -111,10 +135,10 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 									<Toolbar />
 
 									<div className={classes.paper}>
-										<Grid container spacing={3}>
-											<Grid item>
+										<Grid container item xs={12} spacing={3}>
+											<Grid item xs={12}>
 												<Typography variant="body1" color="tertiary">
-													Search Using Filters
+													Search By Filters
 												</Typography>
 												<hr />
 											</Grid>
@@ -196,7 +220,7 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 												</FormControl>
 											</Grid>
 											<Grid item xs={12}>
-												<Button type="submit" variant="contained" fullWidth color="primary">
+												<Button type="submit" variant="contained" fullWidth color="secondary">
 													Search
 												</Button>
 											</Grid>
@@ -205,18 +229,17 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 								</Drawer>
 							</Form>
 						)}
-					</Formik>
-				</Grid>
-				<Grid container item xs={12} sm={9} spacing={3}>
+					</Formik> */}
+				{/* </Grid> */}
+				<Grid container item xs={9} spacing={3} className={classes.productGrid}>
 					<Grid item xs={12}>
-						{query.category === 'all' ? (
-							<Typography variant="h6">{`Search results for all Products`}</Typography>
-						) : (
-							<Typography variant="h6">{`Search results for ${query.make}'s  ${query.category}s`}</Typography>
-						)}
+						<Typography variant="h6">{`Your Search results for Products`}</Typography>
+						<Typography variant="body3">{`${data
+							? data.products.length
+							: products.length} products found`}</Typography>
 					</Grid>
 					{(data ? data.products : products || []).map((product) => (
-						<Grid item xs={12} sm={4} key={product._id}>
+						<Grid item xs={12} sm={4} md={3} key={product._id}>
 							<ProductCard product={product} />
 						</Grid>
 					))}
@@ -229,94 +252,94 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 	);
 }
 
-export function MakeSelect({ initialCategory, makes, category, ...props }) {
-	const { setFieldValue } = useFormikContext();
-	const [ field ] = useField({
-		name: props.name
-	});
-	const initialMakesOrUndefined = category === initialCategory ? makes : undefined;
-	const { data } = useSwr('/api/makes?category=' + category, {
-		dedupingInterval: 60000,
-		initialData: category === 'all' ? [] : initialMakesOrUndefined
-	});
-	const newMakes = data || makes;
+// export function MakeSelect({ initialCategory, makes, category, ...props }) {
+// 	const { setFieldValue } = useFormikContext();
+// 	const [ field ] = useField({
+// 		name: props.name
+// 	});
+// 	const initialMakesOrUndefined = category === initialCategory ? makes : undefined;
+// 	const { data } = useSwr('/api/makes?category=' + category, {
+// 		dedupingInterval: 60000,
+// 		initialData: category === 'all' ? [] : initialMakesOrUndefined
+// 	});
+// 	const newMakes = data || makes;
 
-	useEffect(
-		() => {
-			if (!newMakes.map((a) => a._id).includes(field.value)) {
-				setFieldValue('make', 'all');
-			}
-		},
-		[ category, newMakes ]
-	);
+// 	useEffect(
+// 		() => {
+// 			if (!newMakes.map((a) => a._id).includes(field.value)) {
+// 				setFieldValue('make', 'all');
+// 			}
+// 		},
+// 		[ category, newMakes ]
+// 	);
 
-	//we call api for new data set of make when user changes category in the select dropdown
-	//on successful fetch of new category we set make and models to ALLmakes and allmodels
-	// const { data } = useSwr('/api/makes?category=' + category);
-	// const { data } = useSwr('/api/makes?category=' + category, {
-	// 	dedupingInterval: 60000,
-	// 	onSuccess: (newValues) => {
-	// 		if (!newValues.map((a) => a._id).includes(field.value)) {
-	// 			setFieldValue('make', 'all');
-	// 		}
-	// 	}
-	// });
-	//if no new category is selected we use makess from serverside if not the we use newly fetched data from swr
-	// const newMakes = data || makes;
-	return (
-		<FormControl variant="outlined" fullWidth>
-			<InputLabel id="search-make"> Make</InputLabel>
-			<Select name="make" id="search-make" label="Make" {...field} {...props}>
-				<MenuItem value="all">
-					<em>All Makes</em>
-				</MenuItem>
-				{newMakes.map((make, i) => (
-					<MenuItem value={make._id} key={i}>
-						{`${make._id} (${make.count})`}
-					</MenuItem>
-				))}
-			</Select>
-		</FormControl>
-	);
-}
+// 	//we call api for new data set of make when user changes category in the select dropdown
+// 	//on successful fetch of new category we set make and models to ALLmakes and allmodels
+// 	// const { data } = useSwr('/api/makes?category=' + category);
+// 	// const { data } = useSwr('/api/makes?category=' + category, {
+// 	// 	dedupingInterval: 60000,
+// 	// 	onSuccess: (newValues) => {
+// 	// 		if (!newValues.map((a) => a._id).includes(field.value)) {
+// 	// 			setFieldValue('make', 'all');
+// 	// 		}
+// 	// 	}
+// 	// });
+// 	//if no new category is selected we use makess from serverside if not the we use newly fetched data from swr
+// 	// const newMakes = data || makes;
+// 	return (
+// 		<FormControl variant="outlined" fullWidth>
+// 			<InputLabel id="search-make"> Make</InputLabel>
+// 			<Select name="make" id="search-make" label="Make" {...field} {...props}>
+// 				<MenuItem value="all">
+// 					<em>All Makes</em>
+// 				</MenuItem>
+// 				{newMakes.map((make, i) => (
+// 					<MenuItem value={make._id} key={i}>
+// 						{`${make._id} (${make.count})`}
+// 					</MenuItem>
+// 				))}
+// 			</Select>
+// 		</FormControl>
+// 	);
+// }
 
-export function ModelSelect({ initialMake, models, category, make, ...props }) {
-	const { setFieldValue } = useFormikContext();
-	const [ field ] = useField({
-		name: props.name
-	});
-	const initialModelsOrUndefined = make === initialMake ? models : undefined;
-	const { data } = useSwr(`/api/models?category=${category}&make=${make}`, {
-		dedupingInterval: 60000,
-		initialData: make === 'all' ? [] : initialModelsOrUndefined
-	});
-	const newModels = data || models;
+// export function ModelSelect({ initialMake, models, category, make, ...props }) {
+// 	const { setFieldValue } = useFormikContext();
+// 	const [ field ] = useField({
+// 		name: props.name
+// 	});
+// 	const initialModelsOrUndefined = make === initialMake ? models : undefined;
+// 	const { data } = useSwr(`/api/models?category=${category}&make=${make}`, {
+// 		dedupingInterval: 60000,
+// 		initialData: make === 'all' ? [] : initialModelsOrUndefined
+// 	});
+// 	const newModels = data || models;
 
-	useEffect(
-		() => {
-			if (!newModels.map((a) => a._id).includes(field.value)) {
-				setFieldValue('model', 'all');
-			}
-		},
-		[ newModels, make ]
-	);
+// 	useEffect(
+// 		() => {
+// 			if (!newModels.map((a) => a._id).includes(field.value)) {
+// 				setFieldValue('model', 'all');
+// 			}
+// 		},
+// 		[ newModels, make ]
+// 	);
 
-	return (
-		<FormControl variant="outlined" fullWidth>
-			<InputLabel id="search-model">Model</InputLabel>
-			<Select name="model" id="search-model" label="Model" {...field} {...props}>
-				<MenuItem value="all">
-					<em>All Models</em>
-				</MenuItem>
-				{newModels.map((model, i) => (
-					<MenuItem value={model._id} key={i}>
-						{`${model._id} (${model.count})`}
-					</MenuItem>
-				))}
-			</Select>
-		</FormControl>
-	);
-}
+// 	return (
+// 		<FormControl variant="outlined" fullWidth>
+// 			<InputLabel id="search-model">Model</InputLabel>
+// 			<Select name="model" id="search-model" label="Model" {...field} {...props}>
+// 				<MenuItem value="all">
+// 					<em>All Models</em>
+// 				</MenuItem>
+// 				{newModels.map((model, i) => (
+// 					<MenuItem value={model._id} key={i}>
+// 						{`${model._id} (${model.count})`}
+// 					</MenuItem>
+// 				))}
+// 			</Select>
+// 		</FormControl>
+// 	);
+// }
 
 export const getServerSideProps = async (ctx) => {
 	await dbConnect();

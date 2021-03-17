@@ -33,6 +33,7 @@ import Search from './Search';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
 import { darkTheme, lightTheme } from './theme';
+import Filters from './Filters';
 
 const useStyles = makeStyles((theme) => ({
 	grow: {
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 		display: 'none',
 		textDecoration: 'none',
 		marginLeft: theme.spacing(2),
-		[theme.breakpoints.up('sm')]: {
+		[theme.breakpoints.up('md')]: {
 			display: 'block'
 		}
 	},
@@ -64,6 +65,11 @@ const useStyles = makeStyles((theme) => ({
 	},
 	sectionMobile: {
 		display: 'flex',
+		[theme.breakpoints.up('md')]: {
+			display: 'none'
+		}
+	},
+	filter: {
 		[theme.breakpoints.up('md')]: {
 			display: 'none'
 		}
@@ -172,7 +178,7 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 			open={isMobileMenuOpen}
 			onClose={handleMobileMenuClose}
 		>
-			<MenuItem onClick={handleMenuClose}>
+			<MenuItem onClick={handleMobileMenuClose}>
 				<Link href="/cart">
 					<IconButton
 						aria-label="show new notifications"
@@ -187,7 +193,7 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 				</Link>
 				<p>Cart</p>
 			</MenuItem>
-			<MenuItem onClick={handleMenuClose}>
+			<MenuItem onClick={handleMobileMenuClose}>
 				<Link href="/">
 					<a className={classes.anchorTag}>
 						<IconButton color="inherit" aria-label="Dashboard">
@@ -198,7 +204,7 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 				<p>Home</p>
 			</MenuItem>
 			{!user && (
-				<MenuItem onClick={handleMenuClose}>
+				<MenuItem onClick={handleMobileMenuClose}>
 					<Link href="/signup">
 						<IconButton aria-label="signup" color="inherit" component="a" aria-label="Sign up">
 							<LockOpenIcon />
@@ -209,7 +215,7 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 			)}
 
 			{!user && (
-				<MenuItem onClick={handleMenuClose}>
+				<MenuItem onClick={handleMobileMenuClose}>
 					<Link href="/login">
 						<IconButton aria-label="login" color="inherit" component="a" aria-label="Login">
 							<VpnKeyIcon />
@@ -232,7 +238,7 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 					<p>Profile</p>
 				</MenuItem>
 			)}
-			<MenuItem onClick={handleMenuClose}>
+			<MenuItem onClick={handleMobileMenuClose}>
 				<IconButton
 					aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
 					onClick={() => {
@@ -274,10 +280,13 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 							>
 								<MenuIcon />
 							</IconButton>
+
 							<Button>
 								<Link href="/">
 									<a className={classes.title}>
-										<Typography variant="h6">SHOPIFY</Typography>
+										<Typography variant="h6" color="secondary">
+											SHOPIFY
+										</Typography>
 									</a>
 								</Link>
 							</Button>
