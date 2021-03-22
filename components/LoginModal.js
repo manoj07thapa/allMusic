@@ -1,24 +1,23 @@
 import React, { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Modal, Button, Paper } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
-import red from '@material-ui/core/colors/red';
-import green from '@material-ui/core/colors/green';
+import { Modal, Button } from '@material-ui/core';
+import Login from './Login';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		position: 'absolute',
-		width: '27%',
+		width: '40%',
+		height: '70%',
 		backgroundColor: theme.palette.background.paper,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),
-		marginTop: '21em',
-		marginLeft: '43em'
+		marginTop: '10em',
+		marginLeft: '35em'
 	}
 }));
 
-export default function SimpleModal({ handleDelete }) {
+export default function LoginModal() {
 	const classes = useStyles();
 
 	const [ open, setOpen ] = React.useState(false);
@@ -33,24 +32,17 @@ export default function SimpleModal({ handleDelete }) {
 
 	const body = (
 		<div className={classes.paper}>
-			<h2 id="simple-modal-title">Are you sure, you want to delete ?</h2>
-			<Button onClick={handleDelete}>Yes</Button>
-			<Button onClick={handleClose}>No</Button>
+			<Login />
 		</div>
 	);
 
 	return (
 		<Fragment>
 			<Button type="button" onClick={handleOpen} color="secondary" variant="contained">
-				<DeleteIcon />
+				Add to cart
 			</Button>
 
-			<Modal
-				open={open}
-				onClose={handleClose}
-				aria-labelledby="simple-modal-title"
-				aria-describedby="simple-modal-description"
-			>
+			<Modal open={open} onClose={handleClose} aria-labelledby="login-modal" aria-describedby="login-modal">
 				{body}
 			</Modal>
 		</Fragment>

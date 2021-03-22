@@ -17,8 +17,8 @@ import React from 'react';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import MenuDrawer from './MenuDrawer';
 import { parseCookies } from 'nookies';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import PersonIcon from '@material-ui/icons/Person';
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
@@ -34,6 +34,7 @@ import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
 import { darkTheme, lightTheme } from './theme';
 import Filters from './Filters';
+import Cart from './Cart';
 
 const useStyles = makeStyles((theme) => ({
 	grow: {
@@ -155,13 +156,10 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 				<p>Dashboard</p>
 			</MenuItem>
 			<MenuItem onClick={handleMenuClose}>
-				<Link href="/login">
-					<a className={classes.anchorTag} onClick={handleLogout}>
-						<IconButton color="inherit" aria-label="Dashboard">
-							<ExitToAppIcon style={{ backgroundColor: 'black' }} />
-						</IconButton>
-					</a>
-				</Link>
+				<IconButton color="inherit" aria-label="Dashboard" onClick={handleLogout}>
+					<ExitToAppIcon style={{ backgroundColor: 'black' }} />
+				</IconButton>
+
 				<p>Logout</p>
 			</MenuItem>
 		</Menu>
@@ -180,16 +178,9 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 		>
 			<MenuItem onClick={handleMobileMenuClose}>
 				<Link href="/cart">
-					<IconButton
-						aria-label="show new notifications"
-						color="inherit"
-						component="a"
-						aria-label="Shopping cart"
-					>
-						<Badge badgeContent={11} color="secondary">
-							<ShoppingBasketIcon />
-						</Badge>
-					</IconButton>
+					<a className={classes.anchorTag}>
+						<Cart />
+					</a>
 				</Link>
 				<p>Cart</p>
 			</MenuItem>
@@ -270,16 +261,18 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 				<AppBar className={classes.appBar} color="primary">
 					<Container>
 						<Toolbar>
-							<IconButton
-								edge="start"
-								className={classes.menuButton}
-								color="inherit"
-								aria-label="open drawer"
-								color="inherit"
-								onClick={!open ? handleDrawerOpen : handleDrawerClose}
-							>
-								<MenuIcon />
-							</IconButton>
+							<Tooltip title="menu">
+								<IconButton
+									edge="start"
+									className={classes.menuButton}
+									color="inherit"
+									aria-label="open drawer"
+									color="inherit"
+									onClick={!open ? handleDrawerOpen : handleDrawerClose}
+								>
+									<MenuIcon />
+								</IconButton>
+							</Tooltip>
 
 							<Button>
 								<Link href="/">
@@ -296,11 +289,14 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 
 							<div className={classes.sectionDesktop}>
 								<Link href="/cart">
-									<Tooltip title="Shopping cart">
-										<IconButton color="inherit" component="a" aria-label="Shopping cart">
-											<ShoppingBasketIcon />
-										</IconButton>
-									</Tooltip>
+									<a className={classes.anchorTag}>
+										{/* <Tooltip title="Shopping cart">
+											<IconButton color="inherit" aria-label="Shopping cart">
+												<ShoppingBasketIcon />
+											</IconButton>
+										</Tooltip> */}
+										<Cart />
+									</a>
 								</Link>
 								{user ? (
 									<div>
@@ -321,47 +317,46 @@ export default function Nav({ setTheme, isDarkTheme, props }) {
 									</div>
 								) : null}
 								{user ? (
-									<div>
-										<Link href="/login">
-											<a className={classes.anchorTag}>
-												<Tooltip title="logout">
-													<IconButton
-														color="inherit"
-														onClick={handleLogout}
-														aria-label="logout"
-													>
-														<ExitToAppIcon />
-													</IconButton>
-												</Tooltip>
-											</a>
-										</Link>
-									</div>
+									<Tooltip title="logout">
+										<IconButton
+											color="inherit"
+											component="a"
+											onClick={handleLogout}
+											aria-label="logout"
+										>
+											<ExitToAppIcon />
+										</IconButton>
+									</Tooltip>
 								) : (
 									<div>
 										<Link href="/signup">
-											<Button color="inherit" component="a" style={{ marginTop: '0.5rem' }}>
-												Signup
-											</Button>
+											<a className={classes.anchorTag}>
+												<Button color="inherit" style={{ marginTop: '0.5rem' }}>
+													Signup
+												</Button>
+											</a>
 										</Link>
 
 										<Link href="/login">
-											<Button color="inherit" component="a" style={{ marginTop: '0.5rem' }}>
-												Login
-											</Button>
+											<a className={classes.anchorTag}>
+												<Button color="inherit" style={{ marginTop: '0.5rem' }}>
+													Login
+												</Button>
+											</a>
 										</Link>
 									</div>
 								)}
-
-								<IconButton
-									className={classes.anchorTag}
-									aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
-									onClick={() => {
-										const newTheme = isDarkTheme ? lightTheme : darkTheme;
-										setTheme(newTheme);
-									}}
-								>
-									{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
-								</IconButton>
+								<Tooltip title="change mode">
+									<IconButton
+										aria-label={isDarkTheme ? 'Change to Light Theme' : 'Change to Dark Theme'}
+										onClick={() => {
+											const newTheme = isDarkTheme ? lightTheme : darkTheme;
+											setTheme(newTheme);
+										}}
+									>
+										{isDarkTheme ? <Brightness7Icon /> : <Brightness4Icon />}
+									</IconButton>
+								</Tooltip>
 							</div>
 							<div className={classes.sectionMobile}>
 								<IconButton

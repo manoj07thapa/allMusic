@@ -87,9 +87,7 @@ export default function Filters({ categories, makes, models }) {
 							<div className={classes.paper}>
 								<Grid container item xs={12} spacing={3}>
 									<Grid item xs={12}>
-										<Typography variant="body1" color="tertiary">
-											Search By Filters
-										</Typography>
+										<Typography variant="body1">Search By Filters</Typography>
 										<hr />
 									</Grid>
 									<Grid item xs={12}>

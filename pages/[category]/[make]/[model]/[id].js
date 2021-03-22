@@ -3,15 +3,16 @@ import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import Head from 'next/head';
 import fetch from 'isomorphic-unfetch';
-import AddIcon from '@material-ui/icons/Add';
 import { parseCookies } from 'nookies';
-import { Typography, Paper, TextField, Button, ButtonBase, Grid, Container } from '@material-ui/core';
+import { Typography, TextField, Button, Grid, Container, Tooltip } from '@material-ui/core';
 import dbConnect from '../../../../utils/dbConnect';
 import Product from '../../../../models/Product';
 import Modal from '../../../../components/Modal';
 import cookie1 from 'js-cookie';
 import Carousel from '../../../../components/Carousel';
 import SuggestedCarousel from '../../../../components/SuggestedCarousel';
+import StripePayment from '../../../../components/StripePayment';
+import LoginModal from '../../../../components/LoginModal';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -62,7 +63,7 @@ export default function SingleProduct({ product, suggestedProducts }) {
 				method: 'DELETE'
 			});
 			if (res.status === 200) {
-				router.push('/');
+				router.back();
 			}
 		} catch (error) {
 			console.log(error);
@@ -79,25 +80,30 @@ export default function SingleProduct({ product, suggestedProducts }) {
 				<title>{product.make + '' + product.model}</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Paper className={classes.paper}>
-				<Grid container spacing={5}>
-					<Grid item xs={12} lg={4}>
+			<Container>
+				<Grid container spacing={9} style={{ marginTop: '6rem' }}>
+					<Grid item xs={12} sm={5}>
 						<Carousel product={product} />
 					</Grid>
-					<Grid item xs={12} lg={6} container>
-						<Grid item xs container direction="column" spacing={2}>
-							<Grid item xs>
-								<Typography gutterBottom variant="h4">
+
+					{/* <Grid item xs={12} sm={1}>
+						<div>Carousal chosing imege</div>
+					</Grid> */}
+					<Grid item xs={12} sm={6} container>
+						<Grid container item xs={8} spacing={2}>
+							<Grid item xs={12}>
+								<Typography gutterBottom variant="h5">
 									{product.make}
 								</Typography>
-								<Typography variant="h5" gutterBottom>
-									Model: {product.model}
-								</Typography>
+								<Typography variant="subtitle1">{product.model}</Typography>
 
-								<Typography variant="subtitle1"> ${product.price}</Typography>
+								<Typography variant="h6">Rs. {product.price}</Typography>
+								<Typography variant="body2" color="textSecondary">
+									{product.description}
+								</Typography>
 								<TextField
 									id="outlined-number"
-									label="Number"
+									label="Quantity"
 									type="number"
 									InputLabelProps={{
 										shrink: true
@@ -105,45 +111,40 @@ export default function SingleProduct({ product, suggestedProducts }) {
 									variant="outlined"
 									value={quantity}
 									onChange={(e) => setQuantity(parseInt(e.target.value))}
+									style={{ marginTop: '2rem' }}
 								/>
 							</Grid>
-							<Grid item>
-								<Typography variant="body2" color="textSecondary">
-									{product.description}
-								</Typography>
+							<Grid item xs={6} style={{ marginTop: '2rem' }}>
+								{user ? (
+									<Button color="secondary" variant="contained" onClick={addToCart}>
+										Add to cart
+									</Button>
+								) : (
+									<LoginModal />
+								)}
 							</Grid>
-							<Grid item>
+							<Grid item xs={6} style={{ marginTop: '2rem' }}>
+								{user ? (
+									<Button color="primary" variant="contained">
+										<StripePayment />
+									</Button>
+								) : null}
+							</Grid>
+						</Grid>
+
+						<Grid item xs={1}>
+							<Tooltip title="Delete product">
 								<Typography variant="body2" style={{ cursor: 'pointer' }}>
 									{user.role === 'admin' || user.role === 'root' ? (
 										<Modal handleDelete={handleDelete} />
 									) : null}
 								</Typography>
-							</Grid>
-						</Grid>
-
-						<Grid item>
-							{user ? (
-								<Button color="primary" variant="contained" onClick={addToCart}>
-									<AddIcon /> Add to cart
-								</Button>
-							) : (
-								<Button color="primary" variant="contained" onClick={() => router.push('/login')}>
-									Login To add product
-								</Button>
-							)}
+							</Tooltip>
 						</Grid>
 					</Grid>
 				</Grid>
-			</Paper>
-			<Grid container spacing={5}>
-				<Container>
-					<Paper className={classes.paper}>
-						<Grid item xs={10}>
-							<SuggestedCarousel suggestedProducts={suggestedProducts} />
-						</Grid>
-					</Paper>
-				</Container>
-			</Grid>
+				<SuggestedCarousel suggestedProducts={suggestedProducts} />
+			</Container>
 		</div>
 	);
 }
@@ -158,6 +159,7 @@ export async function getStaticProps(ctx) {
 
 	//querying for similar products suggestion in individual product page
 	const resPromise = Product.find({ category, make }).limit(10);
+
 	try {
 		const [ product, res ] = await Promise.all([ productPromise, resPromise ]);
 		product._id = product._id.toString();

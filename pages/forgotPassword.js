@@ -3,7 +3,7 @@ import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Container } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import fetch from 'isomorphic-unfetch';
 import { Formik, Form } from 'formik';
@@ -12,6 +12,7 @@ import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
 import Link from 'next/link';
 import { parseCookies } from 'nookies';
+import { useState } from 'react';
 
 function Copyright() {
 	return (
@@ -27,23 +28,11 @@ function Copyright() {
 }
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: '5rem'
-	},
-
 	paper: {
-		margin: theme.spacing(8, 4),
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center'
-	},
-
-	form: {
-		width: '100%', // Fix IE 11 issue.
-		marginTop: theme.spacing(1)
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2)
+		width: '30%',
+		position: 'fixed' /* or absolute */,
+		top: '40%',
+		left: '35%'
 	}
 }));
 
@@ -58,6 +47,7 @@ const validationSchema = Yup.object({
 
 export default function ForgotPassword() {
 	const classes = useStyles();
+	const [ response, setResponse ] = useState({});
 
 	const handleSubmit = async (values, actions) => {
 		try {
@@ -71,7 +61,7 @@ export default function ForgotPassword() {
 			});
 			const data = await res.json();
 			if (data.success === true) {
-				alert(data.message);
+				setResponse(data);
 				actions.resetForm();
 			}
 			if (data.success === false) {
@@ -92,13 +82,10 @@ export default function ForgotPassword() {
 			validateOnBlur={false}
 		>
 			{({ errors, isSubmitting, isValid }) => (
-				<Grid container component="main" className={classes.root}>
-					<Grid item xs={12} sm={8} md={5} component={Paper}>
+				<Grid container component="main">
+					<Grid item xs={12} sm={6}>
 						<div className={classes.paper}>
-							<Typography component="h1" variant="h5">
-								Please,type your email and send.
-							</Typography>
-							{console.log(errors)}
+							<Typography component="h3">Please, type your email and send.</Typography>
 							<Form className={classes.form}>
 								<FormikTextField
 									margin="normal"
@@ -113,7 +100,7 @@ export default function ForgotPassword() {
 
 								<br />
 								{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
-								{/* {values.serverMsg && <Alert severity="info">{values.serverMsg}</Alert>} */}
+								{response.success && <Alert severity="info">{response.message}</Alert>}
 								<br />
 								<Button
 									type="submit"
@@ -131,7 +118,7 @@ export default function ForgotPassword() {
 								</Box>
 								<br />
 								<br />
-								{isSubmitting && <LinearProgress />}
+								{/* {isSubmitting && <LinearProgress />} */}
 							</Form>
 						</div>
 					</Grid>

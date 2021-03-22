@@ -11,6 +11,9 @@ export default async (req, res) => {
 		case 'DELETE':
 			await removeProduct(req, res);
 			break;
+		case 'GET':
+			await getCartByUser(req, res);
+			break;
 	}
 };
 
@@ -31,14 +34,15 @@ const addProduct = Authenticated(async (req, res) => {
 			const newProduct = { quantity, product: productId };
 			await Cart.findOneAndUpdate({ _id: cart._id }, { $push: { products: newProduct } });
 		}
-
-		res.status(200).json({ success: true, message: 'product added to cart' });
+		const newCart = await Cart.findOne({ user: req.userId });
+		res.status(200).json({ success: true, message: 'product added to cart', newCart });
 	} catch (error) {
 		res.status(400).json({ success: false, message: 'Couldnot add product to cart' });
 	}
 });
 
 const removeProduct = Authenticated(async (req, res) => {
+	console.log(req.body);
 	const { productId } = req.body;
 	try {
 		const cart = await Cart.findOneAndUpdate(
@@ -46,8 +50,19 @@ const removeProduct = Authenticated(async (req, res) => {
 			{ $pull: { products: { product: productId } } },
 			{ new: true }
 		).populate('products.product');
-		return res.status(200).json({ success: true, cartProducts: cart.products });
+		res.status(200).json({ success: true, cartProducts: cart.products });
 	} catch (error) {
-		return res.status(401).json({ success: false, message: 'Unable to delete product' });
+		res.status(401).json({ success: false, message: 'Unable to delete product' });
+	}
+});
+
+const getCartByUser = Authenticated(async (req, res) => {
+	try {
+		const cart = await Cart.findOne({ user: req.userId }).populate('products.product');
+
+		res.status(200).json({ success: true, cartProducts: cart.products });
+	} catch (error) {
+		console.log(error);
+		res.status(401).json({ success: false, message: 'Unable to fetch cart for this user' });
 	}
 });

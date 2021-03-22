@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken';
 
 export default async (req, res) => {
 	await dbConnect();
-	console.log(req.body);
 	const { email, password } = req.body;
 	try {
 		if (!email || !password) {
@@ -21,7 +20,9 @@ export default async (req, res) => {
 				expiresIn: '7d'
 			});
 			const { firstname, role, email } = user;
-			return res.status(201).json({ success: true, token, user: { firstname, role, email } });
+			return res
+				.status(201)
+				.json({ success: true, token, user: { firstname, role, email }, message: 'You are now logged in.' });
 		} else {
 			return res.status(401).json({ success: false, error: 'Email or password is Invalid' });
 		}

@@ -13,6 +13,8 @@ import { SWRConfig } from 'swr';
 import axios from 'axios';
 import { AppProps } from 'next/app';
 import { useState } from 'react';
+import { parseCookies } from 'nookies';
+import unfetch from 'isomorphic-unfetch';
 
 // axios.defaults.baseURL = 'http://localhost:3000';
 NProgress.configure({ showSpinner: true });
@@ -33,6 +35,11 @@ export default function MyApp({ Component, pageProps }) {
 			jssStyles.parentElement.removeChild(jssStyles);
 		}
 	}, []);
+	const { token } = parseCookies();
+
+	const auth = {
+		headers: { Authorization: token }
+	};
 
 	return (
 		<React.Fragment>
@@ -45,7 +52,7 @@ export default function MyApp({ Component, pageProps }) {
 				<CssBaseline />
 				<Navbar isDarkTheme={isDarkTheme} setTheme={setTheme} />
 
-				<SWRConfig value={{ fetcher: (url) => axios(url).then((r) => r.data) }}>
+				<SWRConfig value={{ fetcher: (url) => axios(url, auth).then((r) => r.data) }}>
 					<Box marginTop={7}>
 						<Component {...pageProps} />
 					</Box>

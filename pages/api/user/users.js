@@ -58,7 +58,7 @@ const forgotPassword = async (req, res) => {
 			await sendResetPasswordEmail(user, token);
 			return res.json({
 				success: true,
-				message: 'Please, check in your email and follow the instruction to reset your passowrd'
+				message: 'Please, check in your email and follow the instruction to reset your passowrd.'
 			});
 		}
 	} catch (err) {

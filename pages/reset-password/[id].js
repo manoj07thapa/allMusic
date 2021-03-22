@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { parseCookies } from 'nookies';
 import { Router } from '@material-ui/icons';
+import { useState } from 'react';
 
 function Copyright() {
 	return (
@@ -29,23 +30,11 @@ function Copyright() {
 }
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: '5rem'
-	},
-
 	paper: {
-		margin: theme.spacing(8, 4),
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center'
-	},
-
-	form: {
-		width: '100%', // Fix IE 11 issue.
-		marginTop: theme.spacing(1)
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2)
+		width: '30%',
+		position: 'fixed' /* or absolute */,
+		top: '35%',
+		left: '35%'
 	}
 }));
 
@@ -64,6 +53,8 @@ export default function ResetPassword() {
 
 	const router = useRouter();
 
+	const [ response, setResponse ] = useState({});
+
 	const handleSubmit = async (values, actions) => {
 		try {
 			const res = await fetch('/api/user/resetPassword', {
@@ -76,9 +67,9 @@ export default function ResetPassword() {
 			});
 			const data = await res.json();
 			if (data.success === true) {
-				alert(data.message);
+				setResponse(data);
 				actions.resetForm();
-				router.push('/login');
+				// router.push('/login');
 			}
 			if (data.success === false) {
 				actions.setErrors(data);
@@ -99,14 +90,13 @@ export default function ResetPassword() {
 			validateOnBlur={false}
 		>
 			{({ errors, isSubmitting, isValid }) => (
-				<Grid container component="main" className={classes.root}>
-					<Grid item xs={12} sm={8} md={5} component={Paper}>
+				<Grid container component="main">
+					<Grid item xs={12} sm={8} md={5}>
 						<div className={classes.paper}>
 							<Typography component="h1" variant="h5">
 								Please, fill the form to reset your password.
 							</Typography>
-							<hr />
-							<Form className={classes.form}>
+							<Form>
 								<FormikTextField
 									margin="normal"
 									fullWidth
@@ -130,7 +120,8 @@ export default function ResetPassword() {
 
 								<br />
 								{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
-								{/* {values.serverMsg && <Alert severity="info">{values.serverMsg}</Alert>} */}
+								{response.success && <Alert severity="success">{response.message}</Alert>}
+
 								<br />
 								<Button
 									type="submit"
@@ -148,7 +139,7 @@ export default function ResetPassword() {
 								</Box>
 								<br />
 								<br />
-								{isSubmitting && <LinearProgress />}
+								{/* {isSubmitting && <LinearProgress />} */}
 							</Form>
 						</div>
 					</Grid>
