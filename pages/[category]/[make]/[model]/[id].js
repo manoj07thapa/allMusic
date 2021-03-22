@@ -13,6 +13,7 @@ import Carousel from '../../../../components/Carousel';
 import SuggestedCarousel from '../../../../components/SuggestedCarousel';
 import StripePayment from '../../../../components/StripePayment';
 import LoginModal from '../../../../components/LoginModal';
+import { mutate } from 'swr';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {

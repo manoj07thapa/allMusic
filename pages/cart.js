@@ -14,6 +14,8 @@ import StripePayment from '../components/StripePayment';
 import Image from 'next/image';
 import useSwr, { mutate, trigger } from 'swr';
 import axios from 'axios';
+import deepEqual from 'fast-deep-equal';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -30,41 +32,44 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CartPage({ products, message }) {
-	console.log('Products', products);
-
-	const { token } = parseCookies();
-	const cookie1 = parseCookies();
-
-	const classes = useStyles();
 	const router = useRouter();
-	const { data } = useSwr('/api/cart', {
+
+	if (message) {
+		router.push('/login');
+	}
+	const { token } = parseCookies();
+
+	console.log('Products', products);
+	if (!products) {
+		return (
+			<div style={{ marginTop: '5rem' }}>
+				<h1>There are no products yet in your cart</h1>
+				{/* <CircularProgress /> */}
+			</div>
+		);
+	}
+	const { data, error } = useSwr('/api/cart', {
 		dedupingInterval: 60000,
 		initialData: products
 	});
+	console.log('SWRdATA', data.cartProducts);
+
+	const cookie1 = parseCookies();
+
+	const classes = useStyles();
 
 	const [ cartProducts, setCartProducts ] = useState(products);
 	const [ total, setTotal ] = useState(0);
 
-	if (!products && token) {
-		return (
-			<Typography variant="h6" style={{ marginTop: '5rem' }}>
-				There are no products in your cart
-			</Typography>
-		);
-	}
+	// if (!data.cartProducts) {
+	// 	return (
+	// 		<div style={{ marginTop: '5rem' }}>
+	// 			<h1>No products in cart</h1>
+	// 			{/* <CircularProgress /> */}
+	// 		</div>
+	// 	);
+	// }
 
-	if (!token) {
-		return (
-			<div>
-				<Typography variant="h6">{message}</Typography>
-				<Link href="/login">
-					<Button color="inherit" variant="contained" component="a">
-						Login
-					</Button>
-				</Link>
-			</div>
-		);
-	}
 	/**if in case the token is tampered we show error returned in error from getServerSideProps */
 	// if (error) {
 	// 	alert(error);
@@ -72,8 +77,6 @@ export default function CartPage({ products, message }) {
 	// 	cookie.remove('token');
 	// 	router.push('/login');
 	// }
-
-	console.log('swrdata', data);
 
 	useEffect(
 		() => {
@@ -91,9 +94,9 @@ export default function CartPage({ products, message }) {
 	};
 
 	const deleteCart = async (pId) => {
-		mutate('/api/cart', data.cartProducts.filter((c) => c.id !== pId), false); //for immediate clearing of data from the cart
-
 		try {
+			// mutate('/api/cart', data.cartProducts.filter((c) => c.id !== pId), false);
+
 			const res = await fetch('/api/cart', {
 				method: 'DELETE',
 				headers: {
@@ -102,31 +105,14 @@ export default function CartPage({ products, message }) {
 				},
 				body: JSON.stringify({ productId: pId })
 			});
-			trigger('/api/cart');
-			const data = await res.json();
-			setCartProducts(data.cartProducts);
+			mutate('/api/cart');
+
+			// const data = await res.json();
+			// setCartProducts(data.cartProducts);
 		} catch (error) {
 			console.log(error);
 		}
 	};
-	// const deleteCart = async (pId) => {
-	// 	try {
-	// 		const res = await axios.delete(
-	// 			'/api/cart',
-	// 			{ productId: pId },
-	// 			{
-	// 				headers: {
-	// 					'Content-Type': 'application/json',
-	// 					Authorization: token
-	// 				}
-	// 			}
-	// 		);
-	// 		const data = await res.json();
-	// 		setCartProducts(data.cartProducts);
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
 
 	// onClick={async () => {
 	// 	const deleteUrl = '/api/cart' + item.product._id;
