@@ -1,6 +1,7 @@
 import Cart from '../../models/Cart';
 import Authenticated from '../../utils/Authenticated';
 import dbConnect from '../../utils/dbConnect';
+import Product from '../../models/Product';
 
 export default async (req, res) => {
 	await dbConnect();
@@ -28,11 +29,16 @@ const addProduct = Authenticated(async (req, res) => {
 		if (productExists) {
 			await Cart.findOneAndUpdate(
 				{ _id: cart._id, 'products.product': productId },
-				{ $inc: { 'products.$.quantity': quantity } }
+				{ $inc: { 'products.$.quantity': quantity } }, //$inc was replaced to $set
+				{ useFindAndModify: false }
 			);
 		} else {
 			const newProduct = { quantity, product: productId };
-			await Cart.findOneAndUpdate({ _id: cart._id }, { $push: { products: newProduct } });
+			await Cart.findOneAndUpdate(
+				{ _id: cart._id },
+				{ $push: { products: newProduct } },
+				{ useFindAndModify: false }
+			);
 		}
 		const newCart = await Cart.findOne({ user: req.userId });
 		res.status(200).json({ success: true, message: 'product added to cart', newCart });
@@ -42,23 +48,24 @@ const addProduct = Authenticated(async (req, res) => {
 });
 
 const removeProduct = Authenticated(async (req, res) => {
-	console.log(req.body);
 	const { productId } = req.body;
+	console.log('PID', productId);
 	try {
 		const cart = await Cart.findOneAndUpdate(
 			{ user: req.userId },
 			{ $pull: { products: { product: productId } } },
-			{ new: true }
-		).populate('products.product');
+			{ useFindAndModify: false }
+		).populate('products.product', Product);
 		res.status(200).json({ success: true, cartProducts: cart.products });
 	} catch (error) {
+		console.log('ErrorDelete', error);
 		res.status(401).json({ success: false, message: 'Unable to delete product' });
 	}
 });
 
 const getCartByUser = Authenticated(async (req, res) => {
 	try {
-		const cart = await Cart.findOne({ user: req.userId }).populate('products.product');
+		const cart = await Cart.findOne({ user: req.userId }).populate('products.product', Product);
 
 		res.status(200).json({ success: true, cartProducts: cart.products });
 	} catch (error) {

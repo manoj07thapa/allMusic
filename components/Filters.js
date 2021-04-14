@@ -29,12 +29,9 @@ const useStyles = makeStyles((theme) => ({
 		padding: theme.spacing(2),
 		marginTop: '1rem'
 	},
-	drawer: {
-		width: drawerWidth,
-		flexShrink: 0
-	},
 	drawerPaper: {
-		width: drawerWidth
+		width: drawerWidth,
+		backgroundColor: theme.palette.primary.contrastText
 	},
 	drawerContainer: {
 		overflow: 'auto'

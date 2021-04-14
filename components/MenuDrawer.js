@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
 		flexShrink: 0
 	},
 	drawerPaper: {
-		width: drawerWidth
+		width: drawerWidth,
+		backgroundColor: theme.palette.primary.contrastText
 	},
 	drawerHeader: {
 		display: 'flex',
@@ -33,8 +34,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	root: {
 		width: '100%',
-		maxWidth: 360,
-		backgroundColor: theme.palette.background.paper
+		maxWidth: 360
 	},
 	nested: {
 		paddingLeft: theme.spacing(4),

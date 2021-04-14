@@ -15,13 +15,12 @@ export const darkTheme = createMuiTheme({
 export const lightTheme = createMuiTheme({
 	palette: {
 		primary: {
-			main: '#1d3557'
+			main: '#1d3557',
+			light: '#bc4749',
+			contrastText: '#e9ecef'
 		},
 		secondary: {
 			main: '#e63946'
-		},
-		tertiary: {
-			main: '#457b9d'
 		},
 		error: {
 			main: red.A400

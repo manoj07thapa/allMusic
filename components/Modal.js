@@ -9,12 +9,21 @@ const useStyles = makeStyles((theme) => ({
 	paper: {
 		position: 'absolute',
 		width: '27%',
-		backgroundColor: theme.palette.background.paper,
+		backgroundColor: theme.palette.primary.contrastText,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),
 		marginTop: '21em',
-		marginLeft: '43em'
+		marginLeft: '43em',
+		[theme.breakpoints.down('sm')]: {
+			marginTop: '8em',
+			marginLeft: '20em'
+		},
+		[theme.breakpoints.down('xs')]: {
+			width: '60%',
+			marginTop: '19em',
+			marginLeft: '6em'
+		}
 	}
 }));
 

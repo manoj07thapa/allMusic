@@ -1,8 +1,11 @@
 import StripeCheckout from 'react-stripe-checkout';
 import { Button } from '@material-ui/core';
 import fetch from 'isomorphic-unfetch';
+import { parseCookies } from 'nookies';
 
 export default function StripePayment({ total }) {
+	const { token } = parseCookies();
+
 	const handleCheckout = async (paymentInfo) => {
 		try {
 			const res = await fetch('/api/payment', {

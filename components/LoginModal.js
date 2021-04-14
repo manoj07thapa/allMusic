@@ -8,12 +8,24 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		width: '40%',
 		height: '70%',
-		backgroundColor: theme.palette.background.paper,
+		backgroundColor: theme.palette.primary.contrastText,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),
 		marginTop: '10em',
-		marginLeft: '35em'
+		marginLeft: '35em',
+		[theme.breakpoints.down('sm')]: {
+			marginTop: '1em',
+			marginLeft: '13em',
+			width: '50%',
+			height: '100%'
+		},
+		[theme.breakpoints.down('xs')]: {
+			marginTop: '8em',
+			marginLeft: '1em',
+			width: '90%',
+			height: '70%'
+		}
 	}
 }));
 

@@ -4,7 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Head from 'next/head';
 import fetch from 'isomorphic-unfetch';
 import { parseCookies } from 'nookies';
-import { Typography, TextField, Button, Grid, Container, Tooltip } from '@material-ui/core';
+import { Typography, TextField, Button, Grid, Container, Tooltip, IconButton } from '@material-ui/core';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import dbConnect from '../../../../utils/dbConnect';
 import Product from '../../../../models/Product';
 import Modal from '../../../../components/Modal';
@@ -13,17 +14,12 @@ import Carousel from '../../../../components/Carousel';
 import SuggestedCarousel from '../../../../components/SuggestedCarousel';
 import StripePayment from '../../../../components/StripePayment';
 import LoginModal from '../../../../components/LoginModal';
-import { mutate } from 'swr';
+import CartModal from '../../../../components/CartModal';
 
 const useStyles = makeStyles((theme) => ({
-	paper: {
-		padding: theme.spacing(2),
-		margin: 'auto',
-		textAlign: 'center'
-	},
-
-	img: {
-		width: '100%'
+	mainGrid: {
+		marginTop: '6rem',
+		backgroundColor: theme.palette.primary.contrastText
 	}
 }));
 
@@ -49,7 +45,9 @@ export default function SingleProduct({ product, suggestedProducts }) {
 				},
 				body: JSON.stringify({ quantity, productId: product._id })
 			});
-			const data = await res.json();
+			// const data = await res.json();
+			// console.log('CARTADDEDRES', data);
+			// setRecentlyAddedItem(data.newProductCart);
 		} catch (error) {
 			cookie1.remove('user');
 			cookie1.remove('token');
@@ -82,14 +80,11 @@ export default function SingleProduct({ product, suggestedProducts }) {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Container>
-				<Grid container spacing={9} style={{ marginTop: '6rem' }}>
+				<Grid container spacing={9} className={classes.mainGrid}>
 					<Grid item xs={12} sm={5}>
 						<Carousel product={product} />
 					</Grid>
 
-					{/* <Grid item xs={12} sm={1}>
-						<div>Carousal chosing imege</div>
-					</Grid> */}
 					<Grid item xs={12} sm={6} container>
 						<Grid container item xs={8} spacing={2}>
 							<Grid item xs={12}>
@@ -115,21 +110,13 @@ export default function SingleProduct({ product, suggestedProducts }) {
 									style={{ marginTop: '2rem' }}
 								/>
 							</Grid>
+
 							<Grid item xs={6} style={{ marginTop: '2rem' }}>
 								{user ? (
-									<Button color="secondary" variant="contained" onClick={addToCart}>
-										Add to cart
-									</Button>
+									<CartModal addToCart={addToCart} recentlyAddedItem={product} />
 								) : (
 									<LoginModal />
 								)}
-							</Grid>
-							<Grid item xs={6} style={{ marginTop: '2rem' }}>
-								{user ? (
-									<Button color="primary" variant="contained">
-										<StripePayment />
-									</Button>
-								) : null}
 							</Grid>
 						</Grid>
 
@@ -140,6 +127,11 @@ export default function SingleProduct({ product, suggestedProducts }) {
 										<Modal handleDelete={handleDelete} />
 									) : null}
 								</Typography>
+							</Tooltip>
+							<Tooltip title="add to favourite" style={{ marginTop: '2rem' }}>
+								<IconButton aria-label="delete" variant="contained" className={classes.margin}>
+									<FavoriteBorderIcon />
+								</IconButton>
 							</Tooltip>
 						</Grid>
 					</Grid>

@@ -12,7 +12,6 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import fetch from 'isomorphic-unfetch';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -170,7 +169,6 @@ export default function Login() {
 							</Box>
 							<br />
 							<br />
-							{/* {isSubmitting && <LinearProgress />} */}
 						</Form>
 					</div>
 				)}

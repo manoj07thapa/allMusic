@@ -37,7 +37,8 @@ const useStyles = makeStyles((theme) => ({
 		flexShrink: 0
 	},
 	drawerPaper: {
-		width: drawerWidth
+		width: drawerWidth,
+		backgroundColor: theme.palette.primary.contrastText
 	},
 	drawerContainer: {
 		overflow: 'auto',
@@ -46,11 +47,15 @@ const useStyles = makeStyles((theme) => ({
 	content: {
 		flexGrow: 1,
 		padding: theme.spacing(3),
-		marginTop: '3rem'
+		marginTop: '3rem',
+		backgroundColor: theme.palette.primary.contrastText
+	},
+	create: {
+		backgroundColor: theme.palette.primary.contrastText
 	}
 }));
 
-export default function Sidebar() {
+export default function DashboardSidebar() {
 	const classes = useStyles();
 
 	const { query } = useRouter();
@@ -87,7 +92,7 @@ export default function Sidebar() {
 						</Link>
 					</List>
 					{user.role === ('root' || 'admin') && (
-						<div>
+						<div className={classes.create}>
 							<List>
 								<ListItem button>
 									<Accordion>

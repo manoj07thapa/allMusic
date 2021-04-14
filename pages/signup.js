@@ -71,6 +71,7 @@ export default function SignUp() {
 	const router = useRouter();
 
 	const handleSubmit = async (values, actions) => {
+		console.log('SIGNUPVALUES', values);
 		try {
 			const res = await fetch('/api/user/signup', {
 				method: 'POST',

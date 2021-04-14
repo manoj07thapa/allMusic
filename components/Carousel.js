@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import Image from 'next/image';
 
 export default function Carousel({ product }) {
-	console.log(product);
 	const settings = {
 		customPaging: function(i) {
 			return (

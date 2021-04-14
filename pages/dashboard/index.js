@@ -1,12 +1,12 @@
 import { parseCookies } from 'nookies';
-import Sidebar from '../../components/Sidebar';
+import DashboardSidebar from '../../components/DashboardSidebar';
 
 export default function DashBoard() {
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
 	return (
 		<div style={{ display: 'flex' }}>
-			<Sidebar />
+			<DashboardSidebar />
 		</div>
 	);
 }

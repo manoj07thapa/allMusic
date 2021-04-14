@@ -1,6 +1,5 @@
-import { Box, Container, CssBaseline } from '@material-ui/core';
+import { Box, CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/core/styles';
-import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
 import Router from 'next/router';
@@ -11,10 +10,9 @@ import Navbar from '../components/Navbar';
 import { darkTheme } from '../components/theme';
 import { SWRConfig } from 'swr';
 import axios from 'axios';
-import { AppProps } from 'next/app';
 import { useState } from 'react';
 import { parseCookies } from 'nookies';
-import unfetch from 'isomorphic-unfetch';
+// import '../styles/globals.css';
 
 // axios.defaults.baseURL = 'http://localhost:3000';
 NProgress.configure({ showSpinner: true });

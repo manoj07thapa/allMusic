@@ -36,6 +36,7 @@ export default async (req, res) => {
 				return res.status(400).json({ success: false, error: 'Sorry couldnot create the utility' });
 			}
 			break;
+
 		default:
 			return res.status(400).json({ success: false });
 			break;

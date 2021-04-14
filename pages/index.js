@@ -2,6 +2,8 @@ import Head from 'next/head';
 import HomeCarousel from '../components/home/HomeCarousel';
 import dbConnect from '../utils/dbConnect';
 import Resource from '../models/Resource';
+import { getCart } from '../hooks/getCart';
+
 export default function Home({ resource }) {
 	return (
 		<div>
