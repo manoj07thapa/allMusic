@@ -49,7 +49,7 @@ export default function KhaltiPayment({ handleClose, products, totalAmt }) {
 
 	let checkout = new KhaltiCheckout(config);
 	const handleClick = () => {
-		checkout.show({ amount: totalAmt * 100 });
+		checkout.show({ amount: 1000 });
 	};
 
 	return (

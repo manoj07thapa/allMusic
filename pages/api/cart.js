@@ -3,7 +3,7 @@ import Authenticated from '../../utils/Authenticated';
 import dbConnect from '../../utils/dbConnect';
 import Product from '../../models/Product';
 
-export default async (req, res) => {
+export default async function cart(req, res) {
 	await dbConnect();
 	switch (req.method) {
 		case 'PUT':
@@ -16,10 +16,13 @@ export default async (req, res) => {
 			await getCartByUser(req, res);
 			break;
 	}
-};
+}
 
 const addProduct = Authenticated(async (req, res) => {
 	const { quantity, productId } = req.body;
+	if (quantity < 1 || quantity > 5) {
+		return res.status(401).json({ message: 'Please choose between 1 to 5.' });
+	}
 
 	try {
 		const cart = await Cart.findOne({ user: req.userId });
@@ -29,7 +32,7 @@ const addProduct = Authenticated(async (req, res) => {
 		if (productExists) {
 			await Cart.findOneAndUpdate(
 				{ _id: cart._id, 'products.product': productId },
-				{ $inc: { 'products.$.quantity': quantity } }, //$inc was replaced to $set
+				{ $set: { 'products.$.quantity': quantity } },
 				{ useFindAndModify: false }
 			);
 		} else {
@@ -43,13 +46,13 @@ const addProduct = Authenticated(async (req, res) => {
 		const newCart = await Cart.findOne({ user: req.userId });
 		res.status(200).json({ success: true, message: 'product added to cart', newCart });
 	} catch (error) {
+		console.log('CartError', error);
 		res.status(400).json({ success: false, message: 'Couldnot add product to cart' });
 	}
 });
 
 const removeProduct = Authenticated(async (req, res) => {
 	const { productId } = req.body;
-	console.log('PID', productId);
 	try {
 		const cart = await Cart.findOneAndUpdate(
 			{ user: req.userId },

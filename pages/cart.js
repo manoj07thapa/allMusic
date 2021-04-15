@@ -4,24 +4,13 @@ import { parseCookies } from 'nookies';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import {
-	IconButton,
-	Paper,
-	Typography,
-	Grid,
-	makeStyles,
-	Container,
-	Button,
-	Tooltip,
-	Divider,
-	TextField,
-	Checkbox
-} from '@material-ui/core';
+import { IconButton, Paper, Typography, Grid, makeStyles, Container, Tooltip, Checkbox } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Image from 'next/image';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { getCart } from '../hooks/getCart';
 import CartTotal from '../components/CartTotal';
+import CartQty from '../components/CartQty';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -83,8 +72,6 @@ export default function CartPage() {
 		return x.isChecked % 2 === 0;
 	});
 
-	console.log('CHECKEDCart', checkedCart);
-
 	const handleCheckBox = async (checkedItem) => {
 		try {
 			const res = await fetch(`/api/checkedItemCart`, {
@@ -117,7 +104,6 @@ export default function CartPage() {
 			});
 			setLoading(true);
 			const data = await res.data;
-			console.log('DELETERES', data);
 			mutate({ ...cart, data });
 			setLoading(false);
 		} catch (error) {
@@ -160,15 +146,7 @@ export default function CartPage() {
 							</Grid>
 
 							<Grid item xs={3}>
-								<TextField
-									id="outlined-number"
-									label="Quantity"
-									type="number"
-									InputLabelProps={{
-										shrink: true
-									}}
-									value={item.quantity}
-								/>
+								<CartQty qty={item.quantity} productId={item.product._id} mutate={mutate} cart={cart} />
 							</Grid>
 							<Grid item xs={2}>
 								<Tooltip title="remove from cart">
@@ -198,20 +176,22 @@ export default function CartPage() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Container>
-				<div style={{ marginLeft: '5rem' }}>
-					<Grid container spacing={1}>
-						<Grid item xs={2}>
-							<Typography variant="h5" className={classes.title}>
-								My Cart
-							</Typography>
-						</Grid>
+				<div style={{ marginLeft: '7rem' }}>
+					<div style={{ backgroundColor: '#ffba08', magrin: '1rem', textAlign: 'center' }}>
+						<Grid container spacing={1}>
+							<Grid item xs={2}>
+								<Typography variant="h5" className={classes.title}>
+									My Cart
+								</Typography>
+							</Grid>
 
-						<Grid item xs={10}>
-							<Typography variant="subtitle1" className={classes.subtitleMargin}>
-								You have {cart.cartProducts.length} products in your cart as of yet.
-							</Typography>
+							<Grid item xs={10}>
+								<Typography variant="subtitle1" className={classes.subtitleMargin}>
+									You have {cart.cartProducts.length} products in your cart as of yet.
+								</Typography>
+							</Grid>
 						</Grid>
-					</Grid>
+					</div>
 					{/* {loading && <CircularProgress />} */}
 					<CartItems />
 					<CartTotal checked={checkedCart} />

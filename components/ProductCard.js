@@ -7,8 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import Link from 'next/link';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { red } from '@material-ui/core/colors';
@@ -69,11 +67,6 @@ export default function ProductCard({ product }) {
 							title={product.make + '' + product.model}
 						/>
 					)}
-					<Tooltip title="add to favourite">
-						<IconButton aria-label="delete" variant="contained" className={classes.margin}>
-							<FavoriteBorderIcon />
-						</IconButton>
-					</Tooltip>
 				</Card>
 			</a>
 		</Link>

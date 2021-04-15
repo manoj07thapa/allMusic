@@ -2,27 +2,26 @@ import fetch from 'isomorphic-unfetch';
 import { useRouter } from 'next/router';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 import Link from 'next/link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import Typography from '@material-ui/core/Typography';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
+import { parseCookies } from 'nookies';
 
 function Copyright() {
 	return (
 		<Typography variant="body2" color="textSecondary" align="center">
 			{'Copyright © '}
 			<Link color="inherit" href="#">
-				All Music
+				Shoppify
 			</Link>{' '}
 			{new Date().getFullYear()}
 			{'.'}
@@ -32,7 +31,7 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
-		marginTop: theme.spacing(8),
+		marginTop: '5rem',
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center'
@@ -51,41 +50,48 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const initialValues = {
-	firstname: '',
-	lastname: '',
-	email: '',
-	password: '',
-	confirmpassword: ''
+	zone: '',
+	district: '',
+	phNumber: '',
+	city: '',
+	area: '',
+	address: ''
 };
 
 const validationSchema = Yup.object({
-	firstname: Yup.string().required(),
-	lastname: Yup.string(),
-	email: Yup.string().required().email(),
-	password: Yup.string().required().min(8, 'Password must be at least 8 characters'),
-	confirmpassword: Yup.string().oneOf([ Yup.ref('password') ], "Password doesn't match").required()
+	zone: Yup.string().required().max(10, 'Zone must be at most 10 characters'),
+	district: Yup.string().required().max(10, 'District must be at most 10 characters'),
+	phNumber: Yup.number().required().min(10, 'Phone number must be at most 10 characters'),
+	city: Yup.string(),
+	area: Yup.string().required(),
+	address: Yup.string().required()
 });
 
-export default function SignUp() {
+export default function ShippingInfo() {
 	const classes = useStyles();
 	const router = useRouter();
+	const { token } = parseCookies();
 
 	const handleSubmit = async (values, actions) => {
+		console.log('VALUES', values);
 		try {
-			const res = await fetch('/api/user/signup', {
-				method: 'POST',
+			const res = await fetch('/api/user/shipInfo', {
+				method: 'PUT',
 				headers: {
 					Accept: 'application/json',
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					Authorization: token
 				},
 				body: JSON.stringify(values)
 			});
 			const data = await res.json();
-			console.log('SIGNUPRES', data);
+			console.log('SHIPINGINFO', data);
 			if (data.success === true) {
-				router.push('/login');
+				alert(data.success);
+				// router.push('/payment-options');
 			} else {
 				actions.setErrors(data);
+				alert(' failed');
 			}
 			actions.setSubmitting(false);
 		} catch (err) {
@@ -97,35 +103,59 @@ export default function SignUp() {
 		<Container component="main" maxWidth="xs">
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
+					<LocalShippingIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
-					Sign up
+					Product shipment form
 				</Typography>
 				<Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
-					{({ errors, isSubmitting, isValid }) => (
+					{({ errors, isSubmitting, isValid, values }) => (
 						<Form className={classes.form}>
 							<Grid container spacing={2}>
 								<Grid item xs={12} sm={6}>
 									<FormikTextField
-										autoComplete="fname"
-										formikKey="firstname"
+										autoComplete="zone"
+										formikKey="zone"
 										variant="outlined"
 										fullWidth
-										id="firstname"
-										label="First Name"
+										id="zone"
+										label="Zone"
 										autoFocus
 										type="text"
+										placeholder="egg: Bagmati, Gandaki, Koshi"
 									/>
 								</Grid>
 								<Grid item xs={12} sm={6}>
 									<FormikTextField
 										variant="outlined"
 										fullWidth
-										id="lastname"
-										label="Last Name"
-										formikKey="lastname"
-										autoComplete="lname"
+										id="district"
+										label="District"
+										formikKey="district"
+										autoComplete="district"
+										type="text"
+										placeholder="egg: Kathmandu, Kavre"
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<FormikTextField
+										variant="outlined"
+										fullWidth
+										id="phNumber"
+										label="Phone Number"
+										formikKey="phNumber"
+										autoComplete="phNumber"
+										type="number"
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<FormikTextField
+										variant="outlined"
+										fullWidth
+										id="city"
+										label="City"
+										formikKey="city"
+										autoComplete="city"
 										type="text"
 									/>
 								</Grid>
@@ -133,39 +163,23 @@ export default function SignUp() {
 									<FormikTextField
 										variant="outlined"
 										fullWidth
-										id="email"
-										label="Email Address"
-										formikKey="email"
-										autoComplete="email"
-										type="email"
+										formikKey="area"
+										label="Area"
+										type="text"
+										id="area"
+										autoComplete="area"
 									/>
 								</Grid>
 								<Grid item xs={12}>
 									<FormikTextField
 										variant="outlined"
 										fullWidth
-										formikKey="password"
-										label="Password"
-										type="password"
-										id="password"
-										autoComplete="current-password"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<FormikTextField
-										variant="outlined"
-										fullWidth
-										formikKey="confirmpassword"
-										label="Confirm Password"
-										type="password"
-										id="confirmpassword"
-										autoComplete="current-password"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<FormControlLabel
-										control={<Checkbox value="allowExtraEmails" color="primary" />}
-										label="I want to receive inspiration, marketing promotions and updates via email."
+										formikKey="address"
+										label="Address"
+										type="text"
+										id="address"
+										autoComplete="address"
+										placeholder="For example: House #123, Street #123, ABC road "
 									/>
 								</Grid>
 							</Grid>
@@ -181,15 +195,8 @@ export default function SignUp() {
 								onClick={handleSubmit}
 								disabled={!isValid || isSubmitting}
 							>
-								Sign Up
+								Submit
 							</Button>
-							<Grid container justify="flex-end">
-								<Grid item>
-									<Link href="/login" variant="body2">
-										<a>Already have an account? Sign in</a>
-									</Link>
-								</Grid>
-							</Grid>
 						</Form>
 					)}
 				</Formik>
@@ -199,4 +206,16 @@ export default function SignUp() {
 			</Box>
 		</Container>
 	);
+}
+
+export async function getServerSideProps(ctx) {
+	const { token } = parseCookies(ctx);
+	if (!token) {
+		return {
+			notFound: true
+		};
+	}
+	return {
+		props: {}
+	};
 }

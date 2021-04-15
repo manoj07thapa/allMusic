@@ -2,8 +2,7 @@ import dbConnect from '../../utils/dbConnect';
 import Cart from '../../models/Cart';
 import Authenticated from '../../utils/Authenticated';
 import Product from '../../models/Product';
-import mongoose from 'mongoose';
-const { ObjectId } = mongoose.Types;
+
 export default async (req, res) => {
 	await dbConnect();
 	switch (req.method) {
@@ -18,8 +17,6 @@ export default async (req, res) => {
 
 const editCart = Authenticated(async (req, res) => {
 	const { checkedItem } = req.body;
-
-	console.log('Request CheckeditemCart', checkedItem);
 
 	try {
 		const resp = await Cart.findOneAndUpdate(

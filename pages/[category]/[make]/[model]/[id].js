@@ -4,8 +4,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import Head from 'next/head';
 import fetch from 'isomorphic-unfetch';
 import { parseCookies } from 'nookies';
-import { Typography, TextField, Button, Grid, Container, Tooltip, IconButton } from '@material-ui/core';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import {
+	Typography,
+	FormControl,
+	Select,
+	InputLabel,
+	MenuItem,
+	Grid,
+	Container,
+	Tooltip,
+	IconButton
+} from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import dbConnect from '../../../../utils/dbConnect';
 import Product from '../../../../models/Product';
 import Modal from '../../../../components/Modal';
@@ -20,13 +30,17 @@ const useStyles = makeStyles((theme) => ({
 	mainGrid: {
 		marginTop: '6rem',
 		backgroundColor: theme.palette.primary.contrastText
+	},
+	center: {
+		marginTop: '20rem',
+		marginLeft: '50rem'
 	}
 }));
 
 export default function SingleProduct({ product, suggestedProducts }) {
-	if (!product || null) {
-		return <h1>This product is un avillable</h1>;
-	}
+	// if (!product || null) {
+	// 	return <h1>This product is un avillable</h1>;
+	// }
 	const classes = useStyles();
 	const [ quantity, setQuantity ] = useState(1);
 
@@ -69,8 +83,12 @@ export default function SingleProduct({ product, suggestedProducts }) {
 		}
 	};
 
-	if (router.isFallback) {
-		return <h3>Loading...</h3>;
+	if (router.isFallback || !product || null) {
+		return (
+			<div className={classes.center}>
+				<CircularProgress />
+			</div>
+		);
 	}
 
 	return (
@@ -97,18 +115,22 @@ export default function SingleProduct({ product, suggestedProducts }) {
 								<Typography variant="body2" color="textSecondary">
 									{product.description}
 								</Typography>
-								<TextField
-									id="outlined-number"
-									label="Quantity"
-									type="number"
-									InputLabelProps={{
-										shrink: true
-									}}
-									variant="outlined"
-									value={quantity}
-									onChange={(e) => setQuantity(parseInt(e.target.value))}
-									style={{ marginTop: '2rem' }}
-								/>
+
+								<FormControl style={{ marginTop: '2rem' }}>
+									<InputLabel id="demo-simple-select-label">Quantity</InputLabel>
+									<Select
+										labelId="demo-simple-select-label"
+										id="demo-simple-select"
+										defaultValue={1}
+										onChange={(e) => setQuantity(parseInt(e.target.value))}
+									>
+										<MenuItem value={1}>1</MenuItem>
+										<MenuItem value={2}>2</MenuItem>
+										<MenuItem value={3}>3</MenuItem>
+										<MenuItem value={4}>4</MenuItem>
+										<MenuItem value={5}>5</MenuItem>
+									</Select>
+								</FormControl>
 							</Grid>
 
 							<Grid item xs={6} style={{ marginTop: '2rem' }}>
@@ -127,11 +149,6 @@ export default function SingleProduct({ product, suggestedProducts }) {
 										<Modal handleDelete={handleDelete} />
 									) : null}
 								</Typography>
-							</Tooltip>
-							<Tooltip title="add to favourite" style={{ marginTop: '2rem' }}>
-								<IconButton aria-label="delete" variant="contained" className={classes.margin}>
-									<FavoriteBorderIcon />
-								</IconButton>
 							</Tooltip>
 						</Grid>
 					</Grid>

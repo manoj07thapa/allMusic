@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function CartTotal({ checked }) {
 	const [ subTotal, setSubTotal ] = useState(0);
-	console.log('SUBTOTAL', subTotal);
 
 	useEffect(
 		() => {
@@ -78,7 +77,7 @@ export default function CartTotal({ checked }) {
 					<Button
 						type="button"
 						onClick={() => {
-							router.push('/payment-options');
+							router.push('/shippingInfo');
 						}}
 						style={{ backgroundColor: '#058c42', color: 'white', marginTop: '2rem' }}
 						variant="contained"
