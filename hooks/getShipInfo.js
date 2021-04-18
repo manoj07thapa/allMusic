@@ -5,8 +5,8 @@ export const getShipInfo = () => {
 	const { data, error, mutate } = useSwr(token ? `/api/user/shipInfo` : null);
 	return {
 		shipInfo: data,
-		isLoading: !error && !data,
-		isError: error,
+		loading: !error && !data,
+		error: error,
 		mutate
 	};
 };

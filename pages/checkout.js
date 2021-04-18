@@ -11,6 +11,7 @@ import router from 'next/router';
 import ShipInfo from '../models/ShipInfo';
 import dbConnect from '../utils/dbConnect';
 import jwt from 'jsonwebtoken';
+import EditShipInfoModal from '../components/EditShipInfoModal';
 
 const useStyles = makeStyles((theme) => ({
 	center: {
@@ -36,18 +37,18 @@ export default function Checkout() {
 
 	const { cart, isLoading, isError, mutate } = getCart();
 	console.log('swrCart', cart);
-	const { shipInfo } = getShipInfo();
+	const { shipInfo, loading, error } = getShipInfo();
 
 	console.log('SHIPINFOCHECKOUT', shipInfo);
 
-	if (isError)
+	if (isError || error)
 		return (
 			<Typography variant="h6" className={classes.center}>
 				Something went wrong
 			</Typography>
 		);
 
-	if (isLoading)
+	if (isLoading || loading)
 		return (
 			<div className={classes.center}>
 				<CircularProgress />
@@ -83,7 +84,9 @@ export default function Checkout() {
 						<Paper className={classes.paper}>
 							<div style={{ display: 'flex' }}>
 								<Typography variant="h6">Delivery Address</Typography>
-								<Button className={classes.delivery}>Change</Button>
+								<div className={classes.delivery}>
+									<EditShipInfoModal />
+								</div>
 							</div>
 							<div style={{ marginTop: '1rem' }}>
 								<Typography variant="subtitle1">
@@ -108,9 +111,9 @@ export default function Checkout() {
 							</div>
 
 							<div style={{ display: 'flex', marginTop: '1rem' }}>
-								<KhaltiPayment />
+								<KhaltiPayment totalAmt={subTotal} products={checkedCart} />
 								<div style={{ marginRight: '1rem', marginLeft: '1rem' }}>
-									<EsewaPayment />
+									<EsewaPayment totalAmt={subTotal} products={checkedCart} />
 								</div>
 
 								<Button color="secondary" variant="contained">

@@ -1,7 +1,8 @@
 import { Button } from '@material-ui/core';
 import KhaltiCheckout from 'khalti-checkout-web';
 import { parseCookies } from 'nookies';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import router from 'next/router';
 
 export default function KhaltiPayment({ products, totalAmt }) {
 	const [ paymentRes, setPaymentRes ] = useState({});
@@ -30,7 +31,11 @@ export default function KhaltiPayment({ products, totalAmt }) {
 					});
 
 					const data = await res.json();
-					setPaymentRes(data);
+					if (data.success === true) {
+						router.push('/paymentSuccess');
+					} else {
+						router.push('/paymentFailed');
+					}
 				} catch (error) {
 					console.log(error);
 				}
@@ -48,13 +53,9 @@ export default function KhaltiPayment({ products, totalAmt }) {
 	};
 
 	const checkout = new KhaltiCheckout(config);
-	// if (location.reload) {
-	// 	checkout.config.eventHandler.onClose();
-	// }
-	console.log('KHALTI', checkout);
 
 	const handleClick = () => {
-		checkout.show({ amount: 1000 });
+		checkout.show({ amount: totalAmt * 100 });
 	};
 
 	return (

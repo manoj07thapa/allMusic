@@ -14,7 +14,7 @@ export default Authenticated(async (req, res) => {
 	};
 
 	let config = {
-		headers: { Authorization: 'Key test_secret_key_b9e7778b3b4845269094a8c8cb095968' }
+		headers: { Authorization: process.env.KHALTI_SECRET_KEY }
 	};
 
 	try {

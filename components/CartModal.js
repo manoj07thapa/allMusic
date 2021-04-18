@@ -51,18 +51,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CartModal({ recentlyAddedItem, addToCart }) {
 	const classes = useStyles();
-	if (recentlyAddedItem) {
-		console.log('recentCartItems', recentlyAddedItem);
-		// console.log('Image', recentlyAddedItem.files[0].url);
-	}
 
 	const [ open, setOpen ] = useState(false);
-	// useEffect(
-	// 	() => {
-	// 		addToCart();
-	// 	},
-	// 	[ recentlyAddedItem ]
-	// );
 
 	const handleOpen = () => {
 		setOpen(true);

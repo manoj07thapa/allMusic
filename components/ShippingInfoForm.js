@@ -15,22 +15,9 @@ import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
 import { parseCookies } from 'nookies';
 
-function Copyright() {
-	return (
-		<Typography variant="body2" color="textSecondary" align="center">
-			{'Copyright © '}
-			<Link color="inherit" href="#">
-				Shoppify
-			</Link>{' '}
-			{new Date().getFullYear()}
-			{'.'}
-		</Typography>
-	);
-}
-
 const useStyles = makeStyles((theme) => ({
 	paper: {
-		marginTop: '5rem',
+		marginTop: '2rem',
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center'
@@ -66,7 +53,7 @@ const validationSchema = Yup.object({
 	address: Yup.string().required()
 });
 
-export default function ShippingInfoForm() {
+export default function ShippingInfoForm({ handleClose }) {
 	const classes = useStyles();
 	const router = useRouter();
 	const { token } = parseCookies();
@@ -84,7 +71,8 @@ export default function ShippingInfoForm() {
 			});
 			const data = await res.json();
 			if (data.success === true) {
-				router.push('/payment-options');
+				handleClose();
+				router.push('/checkout');
 			} else {
 				actions.setErrors(data);
 			}
@@ -196,9 +184,6 @@ export default function ShippingInfoForm() {
 					)}
 				</Formik>
 			</div>
-			<Box mt={5}>
-				<Copyright />
-			</Box>
 		</Container>
 	);
 }
