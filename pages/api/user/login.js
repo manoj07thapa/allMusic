@@ -19,10 +19,13 @@ export default async (req, res) => {
 			const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
 				expiresIn: '7d'
 			});
-			const { firstname, role, email } = user;
-			return res
-				.status(201)
-				.json({ success: true, token, user: { firstname, role, email }, message: 'You are now logged in.' });
+			const { firstname, role, email, lastname } = user;
+			return res.status(201).json({
+				success: true,
+				token,
+				user: { firstname, lastname, role, email },
+				message: 'You are now logged in.'
+			});
 		} else {
 			return res.status(401).json({ success: false, error: 'Email or password is Invalid' });
 		}

@@ -17,7 +17,7 @@ export const lightTheme = createMuiTheme({
 		primary: {
 			main: '#1d3557',
 			light: '#bc4749',
-			contrastText: '#e9ecef'
+			contrastText: '#e9ecef' //'#e9ecef' use this color for grey background
 		},
 		secondary: {
 			main: '#e63946'

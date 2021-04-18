@@ -2,7 +2,17 @@ import { useState, Fragment } from 'react';
 import fetch from 'isomorphic-unfetch';
 import { parseCookies } from 'nookies';
 import Head from 'next/head';
-import { IconButton, Paper, Typography, Grid, makeStyles, Container, Tooltip, Checkbox } from '@material-ui/core';
+import {
+	IconButton,
+	Paper,
+	Typography,
+	Grid,
+	makeStyles,
+	Container,
+	Button,
+	Tooltip,
+	Checkbox
+} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Image from 'next/image';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -10,6 +20,7 @@ import { getCart } from '../hooks/getCart';
 import CartTotal from '../components/CartTotal';
 import CartQty from '../components/CartQty';
 import axios from 'axios';
+import router from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -25,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: '2rem'
 	},
 	center: {
-		marginTop: '20rem',
-		marginLeft: '50rem'
+		marginTop: '10rem',
+		marginLeft: '27rem'
 	}
 }));
 
@@ -113,7 +124,7 @@ export default function CartPage() {
 	const CartItems = () => (
 		<Fragment>
 			{cart.cartProducts.map((item) => (
-				<Paper elevation={1} variant="outlined" className={classes.paper} key={item.product._id}>
+				<Paper className={classes.paper} key={item.product._id}>
 					<div style={{ padding: '1rem' }}>
 						<Grid container spacing={5}>
 							<Grid item xs={1}>
@@ -184,14 +195,21 @@ export default function CartPage() {
 
 							<Grid item xs={10}>
 								<Typography variant="subtitle1" className={classes.subtitleMargin}>
-									You have {cart.cartProducts.length} products in your cart as of yet.
+									You have {cart.cartProducts.length} products in your cart as of yet
 								</Typography>
 							</Grid>
 						</Grid>
 					</div>
 					{/* {loading && <CircularProgress />} */}
 					<CartItems />
-					<CartTotal checked={checkedCart} />
+					{cart.cartProducts.length === 0 && (
+						<div className={classes.center}>
+							<Typography variant="h6">Your cart is empty</Typography>
+							<br />
+							<Button onClick={() => router.push('/products')}>Continue Shopping</Button>
+						</div>
+					)}
+					{cart.cartProducts.length !== 0 && <CartTotal checked={checkedCart} />}
 				</div>
 			</Container>
 		</Fragment>

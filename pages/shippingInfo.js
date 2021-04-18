@@ -2,10 +2,20 @@ import { parseCookies } from 'nookies';
 import ShipInfo from '../models/ShipInfo';
 import dbConnect from '../utils/dbConnect';
 import jwt from 'jsonwebtoken';
+import { Fragment } from 'react';
+import Head from 'next/head';
 import ShippingInfoForm from '../components/ShippingInfoForm';
 
 export default function ShippingInfo() {
-	return <ShippingInfoForm />;
+	return (
+		<Fragment>
+			<Head>
+				<title>ShippingInfo</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+			<ShippingInfoForm />
+		</Fragment>
+	);
 }
 
 export async function getServerSideProps(ctx) {

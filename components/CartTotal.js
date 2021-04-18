@@ -85,6 +85,7 @@ export default function CartTotal({ checked }) {
 						style={{ backgroundColor: '#058c42', color: 'white', marginTop: '3rem' }}
 						variant="contained"
 						fullWidth
+						disabled={checked.length === 0}
 					>
 						Proceed To Payment
 					</Button>

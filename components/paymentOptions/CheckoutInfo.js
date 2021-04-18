@@ -1,15 +1,4 @@
-import {
-	Grid,
-	Container,
-	makeStyles,
-	Paper,
-	Typography,
-	Button,
-	ButtonBase,
-	Drawer,
-	Toolbar,
-	Divider
-} from '@material-ui/core';
+import { Grid, Container, makeStyles, Paper, Typography, Button, Drawer } from '@material-ui/core';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import Image from 'next/image';
 import { Fragment } from 'react';
@@ -19,15 +8,7 @@ const useStyles = makeStyles((theme) => ({
 	drawerPaper: {
 		width: 450,
 		height: 500,
-		marginLeft: '59rem',
-		marginTop: '7rem',
-		border: '1px solid #dee2e6',
-		backgroundColor: theme.palette.primary.contrastText
-	},
-	topDrawer: {
-		width: 450,
-		height: 500,
-		marginLeft: '59rem',
+		marginLeft: '57rem',
 		marginTop: '7rem',
 		border: '1px solid #dee2e6',
 		backgroundColor: theme.palette.primary.contrastText
@@ -72,14 +53,12 @@ export default function CheckoutInfo({ checkedCart }) {
 			>
 				<Container>
 					<div className={classes.margin}>
-						<Grid container spacing={2}>
+						<Grid container item spacing={2}>
 							<Grid item xs={9}>
 								<Typography variant="h6">{checkedCart.length} Items</Typography>
 							</Grid>
 							<Grid item xs={3}>
-								<Button onClick={() => router.push('/cart')} variant="subtitle1">
-									Edit
-								</Button>
+								<Button onClick={() => router.push('/cart')}>Edit</Button>
 							</Grid>
 						</Grid>
 						<hr />
