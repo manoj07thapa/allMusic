@@ -7,14 +7,25 @@ import { sendConfirmationEmail } from '../../../mailer/mailer';
 
 export default async (req, res) => {
 	await dbConnect();
-	console.log('SIGNUPREQ', req.body);
+	switch (req.method) {
+		case 'POST':
+			await signUpUser(req, res);
+			break;
+		case 'PUT':
+			await editUser(req, res);
+			break;
+		case 'GET':
+			await getUser(req, res);
+			break;
+	}
+};
+
+const signUpUser = async (req, res) => {
 	const { firstname, lastname, email, password, confirmpassword } = req.body;
-	console.log('FTNAME', firstname);
 	try {
 		if (!firstname || !email || !password || !confirmpassword) {
 			return res.status(422).json({ error: 'please add all the fields' });
 		}
-		console.log('FTNAMEINNER', firstname);
 
 		const user = await User.findOne({ email });
 

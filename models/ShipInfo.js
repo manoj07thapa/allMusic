@@ -7,23 +7,13 @@ const shipInfoSchema = new mongoose.Schema(
 			type: ObjectId,
 			ref: 'User'
 		},
-		phone: {
-			type: Number
-		},
-		zone: {
-			type: String
-		},
-		district: {
-			type: String
-		},
-		city: {
-			type: String
-		},
-		area: {
-			type: String
-		},
-		address: {
-			type: String
+		shipInfo: {
+			phone: Number,
+			zone: String,
+			district: String,
+			city: String,
+			area: String,
+			address: String
 		}
 	},
 	{

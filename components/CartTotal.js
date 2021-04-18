@@ -2,8 +2,7 @@ import { Grid, Container, Drawer, Toolbar, makeStyles, Typography, Button } from
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
-import KhaltiPayment from './paymentOptions/KhaltiPayment';
-import PaymentOptionsModal from './paymentOptions/PaymentOptionsModal';
+import { getShipInfo } from '../hooks/getShipInfo';
 
 const useStyles = makeStyles((theme) => ({
 	drawerPaper: {
@@ -12,7 +11,8 @@ const useStyles = makeStyles((theme) => ({
 		marginLeft: '59rem',
 		marginTop: '8.5rem',
 		border: '1px solid #dee2e6',
-		backgroundColor: theme.palette.primary.contrastText
+		backgroundColor: theme.palette.primary.contrastText,
+		padding: '1rem'
 	}
 }));
 export default function CartTotal({ checked }) {
@@ -33,6 +33,8 @@ export default function CartTotal({ checked }) {
 		setSubTotal(subTotal);
 	};
 
+	const { shipInfo } = getShipInfo();
+
 	const classes = useStyles();
 	return (
 		<Drawer
@@ -41,12 +43,13 @@ export default function CartTotal({ checked }) {
 				paper: classes.drawerPaper
 			}}
 		>
-			<Toolbar />
 			<Container>
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<Typography variant="h6">My Shopping Cart</Typography>
+						<hr />
 					</Grid>
+
 					<Grid item xs={5}>
 						<Typography variant="caption">Sub-total</Typography>
 					</Grid>
@@ -77,21 +80,14 @@ export default function CartTotal({ checked }) {
 					<Button
 						type="button"
 						onClick={() => {
-							router.push('/shippingInfo');
+							shipInfo.zone ? router.push('/checkout') : router.push('/shippingInfo');
 						}}
-						style={{ backgroundColor: '#058c42', color: 'white', marginTop: '2rem' }}
+						style={{ backgroundColor: '#058c42', color: 'white', marginTop: '3rem' }}
 						variant="contained"
 						fullWidth
 					>
 						Proceed To Payment
 					</Button>
-
-					{/* <Grid item xs={12}>
-						<PaymentOptionsModal products={checked} totalAmt={subTotal} />
-					</Grid> */}
-					{/* <Grid item xs={12}>
-						<KhaltiPayment products={checked} totalAmt={subTotal} />
-					</Grid> */}
 				</Grid>
 			</Container>
 		</Drawer>

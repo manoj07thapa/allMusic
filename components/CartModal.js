@@ -147,7 +147,17 @@ export default function CartModal({ recentlyAddedItem, addToCart }) {
 							</Button>
 						</Grid>
 						{/* <Grid item xs={4}>
-							<PaymentOptionsModal handleClose={handleClose} product={recentlyAddedItem} />
+							<Button
+								type="button"
+								onClick={() => {
+									shipInfo.zone ? router.push('/payment-options') : router.push('/shippingInfo');
+								}}
+								style={{ backgroundColor: '#058c42', color: 'white' }}
+								variant="contained"
+								fullWidth
+							>
+								By it now
+							</Button>
 						</Grid> */}
 					</Grid>
 				</Container>

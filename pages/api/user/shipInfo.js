@@ -15,12 +15,9 @@ export default async function cart(req, res) {
 }
 
 const addShipInfo = Authenticated(async (req, res) => {
-	console.log('REQSHIP', req.body);
 	const { zone, district, phNumber, city, area, address } = req.body;
 	const phone = parseInt(phNumber);
-	console.log('OUTER', zone);
 	try {
-		console.log('INNER', zone);
 		if (!zone || !district || !phone || !area || !address) {
 			return res.status(422).json({ error: 'Please add all the required fields' });
 		}
@@ -28,20 +25,29 @@ const addShipInfo = Authenticated(async (req, res) => {
 
 		const shipInfo = await ShipInfo.findOneAndUpdate(
 			{ _id: ship._id },
-			{ $set: { zone, district, phone, city, area, address } },
+			{
+				$set: {
+					'shipInfo.zone': zone,
+					'shipInfo.district': district,
+					'shipInfo.phone': phone,
+					'shipInfo.city': city,
+					'shipInfo.area': area,
+					'shipInfo.address': address
+				}
+			},
 			{ useFindAndModify: false }
 		);
 		console.log('SHIPINFO', shipInfo);
 		return res.json({ success: true, shipInfo });
 	} catch (error) {
-		console.log('SHIPERROR', error);
 		return res.json({ success: false, message: 'Couidnot create the shipping info' });
 	}
 });
 
 const getShipInfo = Authenticated(async (req, res) => {
 	try {
-		const shipInfo = await ShipInfo.findOne({ user: req.userId });
+		const ship = await ShipInfo.findOne({ user: req.userId });
+		const shipInfo = ship.shipInfo;
 		res.status(200).json({ success: true, shipInfo });
 	} catch (error) {
 		console.log(error);

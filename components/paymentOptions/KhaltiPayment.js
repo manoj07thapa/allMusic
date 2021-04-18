@@ -1,9 +1,9 @@
-import { Grid, Container, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import KhaltiCheckout from 'khalti-checkout-web';
 import { parseCookies } from 'nookies';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function KhaltiPayment({ handleClose, products, totalAmt }) {
+export default function KhaltiPayment({ products, totalAmt }) {
 	const [ paymentRes, setPaymentRes ] = useState({});
 	console.log('Amount', totalAmt);
 	console.log('Payment Response', paymentRes);
@@ -47,7 +47,12 @@ export default function KhaltiPayment({ handleClose, products, totalAmt }) {
 		paymentPreference: [ 'KHALTI', 'EBANKING', 'MOBILE_BANKING', 'CONNECT_IPS', 'SCT' ]
 	};
 
-	let checkout = new KhaltiCheckout(config);
+	const checkout = new KhaltiCheckout(config);
+	// if (location.reload) {
+	// 	checkout.config.eventHandler.onClose();
+	// }
+	console.log('KHALTI', checkout);
+
 	const handleClick = () => {
 		checkout.show({ amount: 1000 });
 	};

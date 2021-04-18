@@ -1,9 +1,7 @@
-import { useState, Fragment, useEffect } from 'react';
+import { useState, Fragment } from 'react';
 import fetch from 'isomorphic-unfetch';
 import { parseCookies } from 'nookies';
-import Link from 'next/link';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { IconButton, Paper, Typography, Grid, makeStyles, Container, Tooltip, Checkbox } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Image from 'next/image';
@@ -52,7 +50,6 @@ export default function CartPage() {
 	// };
 
 	const { cart, isLoading, isError, mutate } = getCart();
-	console.log('swrCart', cart);
 
 	if (isError)
 		return (
@@ -118,7 +115,7 @@ export default function CartPage() {
 			{cart.cartProducts.map((item) => (
 				<Paper elevation={1} variant="outlined" className={classes.paper} key={item.product._id}>
 					<div style={{ padding: '1rem' }}>
-						<Grid container spacing={5} item>
+						<Grid container spacing={5}>
 							<Grid item xs={1}>
 								{/* <Checkbox
 									checked={checkedItem.indexOf(item) === -1 ? false : true}
