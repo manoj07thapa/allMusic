@@ -37,7 +37,6 @@ const addShipInfo = Authenticated(async (req, res) => {
 			},
 			{ useFindAndModify: false }
 		);
-		console.log('SHIPINFO', shipInfo);
 		return res.json({ success: true, shipInfo });
 	} catch (error) {
 		return res.json({ success: false, message: 'Couidnot create the shipping info' });

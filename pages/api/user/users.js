@@ -3,6 +3,9 @@ import Authenticated from '../../../utils/Authenticated';
 import jwt from 'jsonwebtoken';
 import { sendResetPasswordEmail } from '../../../mailer/mailer';
 import dbConnect from '../../../utils/dbConnect';
+import Cart from '../../../models/Cart';
+import ShipInfo from '../../../models/ShipInfo';
+import Order from '../../../models/Order';
 
 export default async (req, res) => {
 	await dbConnect();
@@ -15,6 +18,9 @@ export default async (req, res) => {
 			break;
 		case 'POST':
 			await forgotPassword(req, res);
+			break;
+		case 'DELETE':
+			await removeUser(req, res);
 			break;
 	}
 };
@@ -44,7 +50,6 @@ const changeRole = Authenticated(async (req, res) => {
 
 const forgotPassword = async (req, res) => {
 	const { email } = req.body;
-	console.log(email);
 	try {
 		const user = await User.findOne({ email });
 		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
@@ -58,10 +63,26 @@ const forgotPassword = async (req, res) => {
 			await sendResetPasswordEmail(user, token);
 			return res.json({
 				success: true,
-				message: 'Please, check in your email and follow the instruction to reset your passowrd.'
+				message: 'Please check your email and follow the instruction to reset your passowrd.'
 			});
 		}
 	} catch (err) {
 		return res.json({ success: false, error: ' Invalid Email !!' });
 	}
 };
+
+const removeUser = Authenticated(async (req, res) => {
+	const { id } = req.body;
+
+	try {
+		const user = User.findByIdAndDelete({ _id: id });
+		const cart = Cart.findOneAndDelete({ user: id });
+		const shipInfo = ShipInfo.findOneAndDelete({ user: id });
+		// const orders = await Order.findOneAndRemove({ user: id });
+		await Promise.all([ user, cart, shipInfo ]);
+
+		return res.status(200).json({ success: true });
+	} catch (error) {
+		return res.status(404).json({ success: false });
+	}
+});

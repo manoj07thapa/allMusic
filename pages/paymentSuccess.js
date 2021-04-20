@@ -1,15 +1,15 @@
-import React from 'react';
-
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { Typography, IconButton, makeStyles, Button } from '@material-ui/core';
 import router from 'next/router';
+import Head from 'next/head';
+import { Fragment } from 'react';
 
 const useStyles = makeStyles((theme) => ({
-	center: {
-		marginTop: '15rem',
-		marginLeft: '37rem',
-
-		[theme.breakpoints.down('xs')]: {}
+	paper: {
+		width: '30%',
+		position: 'fixed' /* or absolute */,
+		top: '40%',
+		left: '40%'
 	}
 }));
 
@@ -17,15 +17,19 @@ export default function PaymentSuccess() {
 	const classes = useStyles();
 
 	return (
-		<div className={classes.center}>
-			<IconButton style={{ marginLeft: '8rem', color: 'green' }}>
-				<CheckCircleIcon fontSize="large" />
-			</IconButton>
-			<Typography variant="h5">Your Payment was successful</Typography>
+		<Fragment>
+			<Head>
+				<title>Payment Success</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+			<div className={classes.paper}>
+				<IconButton style={{ color: 'green' }}>
+					<CheckCircleIcon fontSize="large" />
+				</IconButton>
+				<Button onClick={() => router.push('/products')}>continue shopping</Button>
 
-			<Button onClick={() => router.push('/products')} style={{ marginLeft: '5rem' }}>
-				continue shopping
-			</Button>
-		</div>
+				<Typography variant="h5">Your Payment was successful</Typography>
+			</div>
+		</Fragment>
 	);
 }

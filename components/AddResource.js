@@ -7,24 +7,35 @@ import {
 	MenuItem,
 	Select,
 	Grid,
-	Paper,
-	makeStyles
+	makeStyles,
+	Container,
+	Avatar
 } from '@material-ui/core';
 import fetch from 'isomorphic-unfetch';
 import { Formik, Form, Field } from 'formik';
-import { array, object, string, number } from 'yup';
+import { array, object, string } from 'yup';
 import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
 import { MultipleFileUploadField } from './uploads/MultipleFileUploadField';
+import BackupIcon from '@material-ui/icons/Backup';
 
 const useStyles = makeStyles((theme) => ({
-	formControl: {
-		margin: theme.spacing(1),
-		minWidth: 120
-	},
 	paper: {
-		margin: 'auto',
-		padding: theme.spacing(3)
+		marginTop: theme.spacing(1),
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center'
+	},
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main
+	},
+	form: {
+		width: '100%', // Fix IE 11 issue.
+		marginTop: theme.spacing(3)
+	},
+	submit: {
+		margin: theme.spacing(3, 0, 2)
 	}
 }));
 
@@ -84,22 +95,25 @@ export default function AddResource() {
 	};
 
 	return (
-		<Formik
-			initialValues={initialValues}
-			onSubmit={handleSubmit}
-			validationSchema={validationSchema}
-			validateOnBlur={false}
-		>
-			{({ errors, isSubmitting, isValid }) => (
-				<div>
-					<Form>
-						<Paper className={classes.paper}>
-							<Typography component="h1" variant="h5">
-								Create Utility
-							</Typography>
-							<Grid container>
-								<Grid item xs={12} sm={4}>
-									<FormControl variant="outlined" className={classes.formControl}>
+		<Container component="main" maxWidth="xs">
+			<div className={classes.paper}>
+				<Avatar className={classes.avatar}>
+					<BackupIcon />
+				</Avatar>
+				<Typography component="h1" variant="h5">
+					Add Resource
+				</Typography>
+				<Formik
+					initialValues={initialValues}
+					onSubmit={handleSubmit}
+					validationSchema={validationSchema}
+					validateOnBlur={false}
+				>
+					{({ errors, isSubmitting, isValid }) => (
+						<Form className={classes.form}>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									<FormControl variant="outlined" fullWidth>
 										<InputLabel id="category">Category</InputLabel>
 										<Field name="category" as={Select} id="category" label="Category">
 											{categories.map((category, i) => (
@@ -111,7 +125,7 @@ export default function AddResource() {
 									</FormControl>
 								</Grid>
 
-								<Grid item xs={12} sm={4}>
+								<Grid item xs={12} sm={6}>
 									<FormikTextField
 										margin="normal"
 										label="Title"
@@ -119,10 +133,11 @@ export default function AddResource() {
 										type="text"
 										formikKey="title"
 										variant="outlined"
+										fullWidth
 									/>
 								</Grid>
 
-								<Grid item xs={12} sm={4}>
+								<Grid item xs={12} sm={6}>
 									<FormikTextField
 										margin="normal"
 										label="Subtitle"
@@ -130,9 +145,10 @@ export default function AddResource() {
 										type="text"
 										formikKey="subtitle"
 										variant="outlined"
+										fullWidth
 									/>
 								</Grid>
-								<Grid item xs={12} sm={4}>
+								<Grid item xs={12}>
 									<FormikTextField
 										margin="normal"
 										label="Subtitle1"
@@ -140,9 +156,10 @@ export default function AddResource() {
 										type="text"
 										formikKey="subtitle1"
 										variant="outlined"
+										fullWidth
 									/>
 								</Grid>
-								<Grid item xs={12} sm={4}>
+								<Grid item xs={12}>
 									<FormikTextField
 										margin="normal"
 										label="Subtitle2"
@@ -150,9 +167,10 @@ export default function AddResource() {
 										type="text"
 										formikKey="subtitle2"
 										variant="outlined"
+										fullWidth
 									/>
 								</Grid>
-								<Grid item xs={12} sm={4}>
+								<Grid item xs={12}>
 									<FormikTextField
 										margin="normal"
 										label="Subtitle3"
@@ -160,12 +178,11 @@ export default function AddResource() {
 										type="text"
 										formikKey="subtitle3"
 										variant="outlined"
+										fullWidth
 									/>
 								</Grid>
-								<Grid item xs={12} sm={3}>
-									<MultipleFileUploadField name="files" />
-								</Grid>
-								<Grid item xs={12} sm={4}>
+
+								<Grid item xs={12}>
 									<FormikTextField
 										margin="normal"
 										label="Description"
@@ -175,28 +192,29 @@ export default function AddResource() {
 										variant="outlined"
 										multiline
 										rows={4}
+										fullWidth
 									/>
 								</Grid>
-
-								<Grid item xs={12} sm={4}>
-									<Button
-										type="submit"
-										variant="contained"
-										color="primary"
-										disabled={!isValid || isSubmitting}
-									>
-										Create
-									</Button>
+								<Grid item xs={12}>
+									<MultipleFileUploadField name="files" />
 								</Grid>
 
-								{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
+								<Button
+									type="submit"
+									variant="contained"
+									color="secondary"
+									disabled={!isValid || isSubmitting}
+									fullWidth
+								>
+									Create Resource
+								</Button>
 
-								{isSubmitting && <LinearProgress />}
+								{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
 							</Grid>
-						</Paper>
-					</Form>
-				</div>
-			)}
-		</Formik>
+						</Form>
+					)}
+				</Formik>
+			</div>
+		</Container>
 	);
 }

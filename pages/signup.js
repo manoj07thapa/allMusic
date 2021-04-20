@@ -9,13 +9,15 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import Alert from '@material-ui/lab/Alert';
 import { FormikTextField } from '../hooks/FormikTextField';
+import { Fragment } from 'react';
+import Head from 'next/head';
+import { parseCookies } from 'nookies';
 
 function Copyright() {
 	return (
@@ -94,109 +96,132 @@ export default function SignUp() {
 	};
 
 	return (
-		<Container component="main" maxWidth="xs">
-			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
-				</Avatar>
-				<Typography component="h1" variant="h5">
-					Sign up
-				</Typography>
-				<Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
-					{({ errors, isSubmitting, isValid }) => (
-						<Form className={classes.form}>
-							<Grid container spacing={2}>
-								<Grid item xs={12} sm={6}>
-									<FormikTextField
-										autoComplete="fname"
-										formikKey="firstname"
-										variant="outlined"
-										fullWidth
-										id="firstname"
-										label="First Name"
-										autoFocus
-										type="text"
-									/>
+		<Fragment>
+			<Head>
+				<title>SignUp</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+			<Container component="main" maxWidth="xs">
+				<div className={classes.paper}>
+					<Avatar className={classes.avatar}>
+						<LockOutlinedIcon />
+					</Avatar>
+					<Typography component="h1" variant="h5">
+						Sign up
+					</Typography>
+					<Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
+						{({ errors, isSubmitting, isValid }) => (
+							<Form className={classes.form}>
+								<Grid container spacing={2}>
+									<Grid item xs={12} sm={6}>
+										<FormikTextField
+											autoComplete="fname"
+											formikKey="firstname"
+											variant="outlined"
+											fullWidth
+											id="firstname"
+											label="First Name"
+											autoFocus
+											type="text"
+										/>
+									</Grid>
+									<Grid item xs={12} sm={6}>
+										<FormikTextField
+											variant="outlined"
+											fullWidth
+											id="lastname"
+											label="Last Name"
+											formikKey="lastname"
+											autoComplete="lname"
+											type="text"
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<FormikTextField
+											variant="outlined"
+											fullWidth
+											id="email"
+											label="Email Address"
+											formikKey="email"
+											autoComplete="email"
+											type="email"
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<FormikTextField
+											variant="outlined"
+											fullWidth
+											formikKey="password"
+											label="Password"
+											type="password"
+											id="password"
+											autoComplete="current-password"
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<FormikTextField
+											variant="outlined"
+											fullWidth
+											formikKey="confirmpassword"
+											label="Confirm Password"
+											type="password"
+											id="confirmpassword"
+											autoComplete="current-password"
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<FormControlLabel
+											control={<Checkbox value="allowExtraEmails" color="primary" />}
+											label="I want to receive inspiration, marketing promotions and updates via email."
+										/>
+									</Grid>
 								</Grid>
-								<Grid item xs={12} sm={6}>
-									<FormikTextField
-										variant="outlined"
-										fullWidth
-										id="lastname"
-										label="Last Name"
-										formikKey="lastname"
-										autoComplete="lname"
-										type="text"
-									/>
+								<br />
+								{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
+								<br />
+								<Button
+									type="submit"
+									fullWidth
+									variant="contained"
+									color="secondary"
+									className={classes.submit}
+									onClick={handleSubmit}
+									disabled={!isValid || isSubmitting}
+								>
+									Sign Up
+								</Button>
+								<Grid container justify="flex-end">
+									<Grid item>
+										<Link href="/login" variant="body2">
+											<a>Already have an account? Sign in</a>
+										</Link>
+									</Grid>
 								</Grid>
-								<Grid item xs={12}>
-									<FormikTextField
-										variant="outlined"
-										fullWidth
-										id="email"
-										label="Email Address"
-										formikKey="email"
-										autoComplete="email"
-										type="email"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<FormikTextField
-										variant="outlined"
-										fullWidth
-										formikKey="password"
-										label="Password"
-										type="password"
-										id="password"
-										autoComplete="current-password"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<FormikTextField
-										variant="outlined"
-										fullWidth
-										formikKey="confirmpassword"
-										label="Confirm Password"
-										type="password"
-										id="confirmpassword"
-										autoComplete="current-password"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<FormControlLabel
-										control={<Checkbox value="allowExtraEmails" color="primary" />}
-										label="I want to receive inspiration, marketing promotions and updates via email."
-									/>
-								</Grid>
-							</Grid>
-							<br />
-							{errors.error ? <Alert severity="error">{errors.error}</Alert> : null}
-							<br />
-							<Button
-								type="submit"
-								fullWidth
-								variant="contained"
-								color="secondary"
-								className={classes.submit}
-								onClick={handleSubmit}
-								disabled={!isValid || isSubmitting}
-							>
-								Sign Up
-							</Button>
-							<Grid container justify="flex-end">
-								<Grid item>
-									<Link href="/login" variant="body2">
-										<a>Already have an account? Sign in</a>
-									</Link>
-								</Grid>
-							</Grid>
-						</Form>
-					)}
-				</Formik>
-			</div>
-			<Box mt={5}>
-				<Copyright />
-			</Box>
-		</Container>
+							</Form>
+						)}
+					</Formik>
+				</div>
+				<Box mt={5}>
+					<Copyright />
+				</Box>
+			</Container>
+		</Fragment>
 	);
+}
+
+export async function getServerSideProps(ctx) {
+	const { token } = parseCookies(ctx);
+
+	if (token) {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false
+			}
+		};
+	}
+
+	return {
+		props: {}
+	};
 }

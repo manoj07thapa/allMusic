@@ -10,7 +10,7 @@ export default function ShippingInfo() {
 	return (
 		<Fragment>
 			<Head>
-				<title>ShippingInfo</title>
+				<title>Shipping Infoormation</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<ShippingInfoForm />

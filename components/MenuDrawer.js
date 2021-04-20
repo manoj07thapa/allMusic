@@ -21,8 +21,8 @@ const useStyles = makeStyles((theme) => ({
 		flexShrink: 0
 	},
 	drawerPaper: {
-		width: drawerWidth,
-		backgroundColor: theme.palette.primary.contrastText
+		width: drawerWidth
+		// backgroundColor: theme.palette.primary.contrastText
 	},
 	drawerHeader: {
 		display: 'flex',

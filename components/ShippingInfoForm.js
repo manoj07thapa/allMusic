@@ -20,7 +20,8 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: '2rem',
 		display: 'flex',
 		flexDirection: 'column',
-		alignItems: 'center'
+		alignItems: 'center',
+		backgroundColor: theme.palette.background.paper
 	},
 	avatar: {
 		margin: theme.spacing(1),
@@ -53,7 +54,7 @@ const validationSchema = Yup.object({
 	address: Yup.string().required()
 });
 
-export default function ShippingInfoForm({ handleClose }) {
+export default function ShippingInfoForm({ handleClose, mutate, shipInfo }) {
 	const classes = useStyles();
 	const router = useRouter();
 	const { token } = parseCookies();
@@ -70,6 +71,8 @@ export default function ShippingInfoForm({ handleClose }) {
 				body: JSON.stringify(values)
 			});
 			const data = await res.json();
+			const info = data.shipInfo;
+			mutate();
 			if (data.success === true) {
 				handleClose();
 				router.push('/checkout');

@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		width: '40%',
 		height: '70%',
-		backgroundColor: theme.palette.primary.contrastText,
+		backgroundColor: theme.palette.background.paper,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),

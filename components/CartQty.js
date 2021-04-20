@@ -15,8 +15,7 @@ export default function CartQty({ qty, productId, mutate, cart }) {
 				body: JSON.stringify({ quantity: parseInt(e.target.value), productId })
 			});
 			const data = await res.json();
-			const newCart = data.newCart;
-			mutate({ ...cart, newCart });
+			mutate();
 		} catch (error) {
 			console.log(error);
 		}

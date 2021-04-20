@@ -10,9 +10,9 @@ export default async (req, res) => {
 		case 'GET':
 			try {
 				const products = await getPaginatedProducts(req.query);
-				return res.status(200).json(products);
+				res.status(200).json(products);
 			} catch (error) {
-				return res.status(400).json({ success: false, error: 'Sorry couldnot find products' });
+				res.status(400).json({ success: false, error: 'Sorry couldnot find products' });
 			}
 			break;
 		case 'POST':
@@ -22,9 +22,9 @@ export default async (req, res) => {
 					return res.status(404).json({ success: false, error: 'Add all the required fields' });
 				}
 				const product = await new Product({ category, make, model, price, description, files }).save();
-				return res.status(201).json({ success: true, data: product, message: 'Product Created' });
+				res.status(201).json({ success: true, data: product, message: 'Product Created' });
 			} catch (error) {
-				return res.status(400).json({ success: false, error: 'Sorry couldnot create the product' });
+				res.status(400).json({ success: false, error: 'Sorry couldnot create the product' });
 			}
 			break;
 		default:

@@ -13,11 +13,12 @@ import { red } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		backgroundColor: theme.palette.primary.contrastText,
-		padding: '1rem'
+		// backgroundColor: theme.palette.primary.contrastText,
+		padding: '1rem',
+		height: '20rem'
 	},
 	media: {
-		height: 0,
+		height: '17rem',
 		paddingTop: '56.25%' // 16:9
 	},
 	anchorTag: {
@@ -59,7 +60,7 @@ export default function ProductCard({ product }) {
 					/>
 
 					{!product ? (
-						<Skeleton animation="wave" variant="rect" className={classes.media} />
+						<Skeleton animation="wave" variant="react" className={classes.media} />
 					) : (
 						<CardMedia
 							className={classes.media}

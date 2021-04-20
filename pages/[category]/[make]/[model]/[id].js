@@ -28,8 +28,8 @@ import CartModal from '../../../../components/CartModal';
 
 const useStyles = makeStyles((theme) => ({
 	mainGrid: {
-		marginTop: '6rem',
-		backgroundColor: theme.palette.primary.contrastText
+		marginTop: '6rem'
+		// backgroundColor: theme.palette.primary.contrastText
 	},
 	center: {
 		marginTop: '20rem',
@@ -94,7 +94,9 @@ export default function SingleProduct({ product, suggestedProducts }) {
 	return (
 		<div>
 			<Head>
-				<title>{product.make + '' + product.model}</title>
+				<title>
+					{product.make} | {product.model}
+				</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Container>

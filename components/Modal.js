@@ -1,15 +1,13 @@
 import React, { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Modal, Button, Paper } from '@material-ui/core';
+import { Modal, Button, IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-import red from '@material-ui/core/colors/red';
-import green from '@material-ui/core/colors/green';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		position: 'absolute',
 		width: '27%',
-		backgroundColor: theme.palette.primary.contrastText,
+		backgroundColor: theme.palette.background.paper,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),
@@ -42,7 +40,7 @@ export default function SimpleModal({ handleDelete }) {
 
 	const body = (
 		<div className={classes.paper}>
-			<h2 id="simple-modal-title">Are you sure, you want to delete ?</h2>
+			<h2 id="simple-modal-title">Are you sure you want to delete ?</h2>
 			<Button onClick={handleDelete}>Yes</Button>
 			<Button onClick={handleClose}>No</Button>
 		</div>
@@ -50,9 +48,9 @@ export default function SimpleModal({ handleDelete }) {
 
 	return (
 		<Fragment>
-			<Button type="button" onClick={handleOpen} color="secondary" variant="contained">
+			<IconButton type="button" onClick={handleOpen} variant="contained">
 				<DeleteIcon />
-			</Button>
+			</IconButton>
 
 			<Modal
 				open={open}

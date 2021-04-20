@@ -19,8 +19,8 @@ const useStyles = makeStyles((theme) => ({
 		marginLeft: '50rem'
 	},
 	paper: {
-		backgroundColor: theme.palette.primary.contrastText,
-		padding: '2rem'
+		// backgroundColor: theme.palette.primary.contrastText,
+		padding: '3rem'
 	},
 	delivery: {
 		marginLeft: '18rem',
@@ -35,11 +35,8 @@ export default function Checkout() {
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
 
-	const { cart, isLoading, isError, mutate } = getCart();
-	console.log('swrCart', cart);
-	const { shipInfo, loading, error } = getShipInfo();
-
-	console.log('SHIPINFOCHECKOUT', shipInfo);
+	const { cart, isLoading, isError } = getCart();
+	const { shipInfo, loading, error, mutate } = getShipInfo();
 
 	if (isError || error)
 		return (
@@ -58,7 +55,6 @@ export default function Checkout() {
 	var checkedCart = cart.cartProducts.filter(function(x) {
 		return x.isChecked % 2 === 0;
 	});
-	console.log('CHECKEDCART', checkedCart);
 	let subTotal = 0;
 	checkedCart.map((p) => {
 		subTotal += p.product.price * p.quantity;
@@ -85,7 +81,7 @@ export default function Checkout() {
 							<div style={{ display: 'flex' }}>
 								<Typography variant="h6">Delivery Address</Typography>
 								<div className={classes.delivery}>
-									<EditShipInfoModal />
+									<EditShipInfoModal mutate={mutate} shipInfo={shipInfo} />
 								</div>
 							</div>
 							<div style={{ marginTop: '1rem' }}>

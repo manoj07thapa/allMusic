@@ -24,9 +24,11 @@ import router from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
-		backgroundColor: theme.palette.primary.contrastText,
+		// backgroundColor: theme.palette.primary.contrastText,
 		marginTop: '1rem',
-		width: '60%'
+		width: '60%',
+		height: '10rem',
+		padding: '2rem'
 	},
 	title: {
 		fontWeight: 'bold',
@@ -93,7 +95,7 @@ export default function CartPage() {
 			setLoading(true);
 			const data = await res.json();
 			const checkedCart = data.checkedCart;
-			mutate({ ...cart, checkedCart });
+			mutate();
 			setLoading(false);
 		} catch (error) {
 			console.log(error);
@@ -112,7 +114,7 @@ export default function CartPage() {
 			});
 			setLoading(true);
 			const data = await res.data;
-			mutate({ ...cart, data });
+			mutate();
 			setLoading(false);
 		} catch (error) {
 			console.log(error);

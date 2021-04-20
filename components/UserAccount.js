@@ -63,18 +63,6 @@ export default function account() {
 		getOrders();
 	}, []);
 	const user = cookie.user ? JSON.parse(cookie.user) : null;
-	if (!user) {
-		return (
-			<div>
-				<h2>please lgin to view your account</h2>
-				<Link href="/login">
-					<Button color="inherit" component="a">
-						Login
-					</Button>
-				</Link>
-			</div>
-		);
-	}
 
 	return (
 		<div>

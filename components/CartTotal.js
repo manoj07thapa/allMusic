@@ -1,4 +1,4 @@
-import { Grid, Container, Drawer, Toolbar, makeStyles, Typography, Button } from '@material-ui/core';
+import { Grid, Container, Drawer, Divider, makeStyles, Typography, Button } from '@material-ui/core';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
@@ -10,8 +10,8 @@ const useStyles = makeStyles((theme) => ({
 		height: 400,
 		marginLeft: '59rem',
 		marginTop: '8.5rem',
-		border: '1px solid #dee2e6',
-		backgroundColor: theme.palette.primary.contrastText,
+		// border: '1px solid #dee2e6',
+		// backgroundColor: theme.palette.primary.contrastText,
 		padding: '1rem'
 	}
 }));
@@ -47,7 +47,7 @@ export default function CartTotal({ checked }) {
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<Typography variant="h6">My Shopping Cart</Typography>
-						<hr />
+						<Divider style={{ marginTop: '1rem' }} />
 					</Grid>
 
 					<Grid item xs={5}>

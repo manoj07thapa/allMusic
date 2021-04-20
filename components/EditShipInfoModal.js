@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		width: '50%',
 		height: '90%',
-		backgroundColor: '#e9ecef',
+		backgroundColor: theme.palette.background.paper,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		marginTop: '3em',
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function CartModal({ recentlyAddedItem, addToCart }) {
+export default function EditShipInfoModal({ mutate, shipInfo }) {
 	const classes = useStyles();
 
 	const [ open, setOpen ] = useState(false);
@@ -46,7 +46,7 @@ export default function CartModal({ recentlyAddedItem, addToCart }) {
 				<ClearIcon />
 			</IconButton>
 			<Container>
-				<ShippingInfoForm handleClose={handleClose} />
+				<ShippingInfoForm handleClose={handleClose} mutate={mutate} shipInfo={shipInfo} />
 			</Container>
 		</div>
 	);

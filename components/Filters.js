@@ -30,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: '1rem'
 	},
 	drawerPaper: {
-		width: drawerWidth,
-		backgroundColor: theme.palette.primary.contrastText
+		width: drawerWidth
+		// backgroundColor: theme.palette.primary.contrastText
 	},
 	drawerContainer: {
 		overflow: 'auto'

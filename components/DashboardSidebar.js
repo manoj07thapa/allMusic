@@ -37,21 +37,14 @@ const useStyles = makeStyles((theme) => ({
 		flexShrink: 0
 	},
 	drawerPaper: {
-		width: drawerWidth,
-		backgroundColor: theme.palette.primary.contrastText
+		width: drawerWidth
 	},
 	drawerContainer: {
-		overflow: 'auto',
-		marginTop: '3rem'
+		overflow: 'auto'
 	},
 	content: {
-		flexGrow: 1,
-		padding: theme.spacing(3),
-		marginTop: '3rem',
-		backgroundColor: theme.palette.primary.contrastText
-	},
-	create: {
-		backgroundColor: theme.palette.primary.contrastText
+		marginLeft: '25rem',
+		marginTop: 0
 	}
 }));
 
@@ -59,11 +52,9 @@ export default function DashboardSidebar() {
 	const classes = useStyles();
 
 	const { query } = useRouter();
-	console.log(query);
 
 	const cookie = parseCookies();
 	const user = cookie.user ? JSON.parse(cookie.user) : '';
-	console.log(user);
 
 	return (
 		<div className={classes.root}>
@@ -92,7 +83,7 @@ export default function DashboardSidebar() {
 						</Link>
 					</List>
 					{user.role === ('root' || 'admin') && (
-						<div className={classes.create}>
+						<div>
 							<List>
 								<ListItem button>
 									<Accordion>
@@ -172,13 +163,15 @@ export default function DashboardSidebar() {
 					</List>
 				</div>
 			</Drawer>
-			<main className={classes.content}>
-				<Toolbar />
+			<main>
 				{query.query === 'index' && <div>Dashboard Home</div>}
-				{query.query === 'add_product' && <CreateProduct />}
-				{query.query === 'user_management' && <UserRoles />}
+				<div className={classes.content}>
+					{query.query === 'add_product' && user.role === ('root' || 'admin') ? <CreateProduct /> : null}
+
+					{query.query === 'add_utility' && user.role === ('root' || 'admin') ? <AddResource /> : null}
+				</div>
+				{query.query === 'user_management' && user.role === ('root' || 'admin') ? <UserRoles /> : null}
 				{query.query === 'user_account' && <UserAccount />}
-				{query.query === 'add_utility' && <AddResource />}
 			</main>
 		</div>
 	);

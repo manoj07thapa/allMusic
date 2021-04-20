@@ -1,13 +1,15 @@
 import { Typography, IconButton, makeStyles, Button } from '@material-ui/core';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import router from 'next/router';
+import { Fragment } from 'react';
+import Head from 'next/head';
 
 const useStyles = makeStyles((theme) => ({
-	center: {
-		marginTop: '15rem',
-		marginLeft: '38rem',
-
-		[theme.breakpoints.down('xs')]: {}
+	paper: {
+		width: '30%',
+		position: 'fixed' /* or absolute */,
+		top: '40%',
+		left: '40%'
 	}
 }));
 
@@ -15,14 +17,18 @@ export default function paymentFailed() {
 	const classes = useStyles();
 
 	return (
-		<div className={classes.center}>
-			<IconButton color="secondary" style={{ marginLeft: '6rem' }}>
-				<ReportProblemIcon fontSize="large" />
-			</IconButton>
-			<Typography variant="h5">Sorry your payment failed</Typography>
-			<Button onClick={() => router.back()} style={{ marginLeft: '5rem' }}>
-				try again
-			</Button>
-		</div>
+		<Fragment>
+			<Head>
+				<title>Payment Failed</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+			<div className={classes.paper}>
+				<IconButton color="secondary">
+					<ReportProblemIcon fontSize="large" />
+				</IconButton>
+				<Button onClick={() => router.back()}>try again</Button>
+				<Typography variant="h5">Sorry your payment failed</Typography>
+			</div>
+		</Fragment>
 	);
 }

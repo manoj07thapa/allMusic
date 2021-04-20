@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function CustomizedSnackbars({ response }) {
+export default function CustomizedSnackbar({ response }) {
 	const classes = useStyles();
 	// const [ open, setOpen ] = React.useState(false);
 

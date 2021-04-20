@@ -90,7 +90,7 @@ export default function Products({ categories, makes, models, ssProducts, totalP
 	return (
 		<div>
 			<Head>
-				<title>Shopify || Products</title>
+				<title>Shopify | Products</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 

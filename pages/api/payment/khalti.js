@@ -19,6 +19,7 @@ export default Authenticated(async (req, res) => {
 
 	try {
 		const response = await axios.post('https://khalti.com/api/v2/payment/verify/', data, config);
+		console.log('KHALTIPAYMENTRES', response);
 		res.status(200).json({ success: true, message: 'Payment successful' });
 	} catch (error) {
 		res.status(200).json({ success: false, message: 'Payment Unsuccessful' });
